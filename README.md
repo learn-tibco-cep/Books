@@ -4,7 +4,7 @@
 
 In this tutorial, we use the [Open Library Data Dumps](https://openlibrary.org/developers/dumps) to demonstrate data persistence in BE applications.  BusinessEvents supports many different types of data cache and persistent stores.  You may select and configure a persistent store at deployment time by providing a CDD file.
 
-This project has configured the following commonly used persistent stores and presented implementations for CRUD (Create, Query, Update, and Delete) operations for single concept or bulk of 1000's concepts.
+This project has configured the following commonly used persistent stores and presented implementation of CRUD (Create, Query, Update, and Delete) operations for single concept or bulk of 1000's concepts.
 
 * [Books.cdd](./Books.cdd) - Apache Ignite data grid with no persistence
 * [BooksPG.cdd](./BooksPG.cdd) - Apache Ignite data grid with Postgresql as the backing store
@@ -22,13 +22,13 @@ Detailed description for this tutorial can be found in [Wiki page](https://githu
 * [JavaSrc](./JavaSrc) - This folder contains custom Java functions for supporting query operations.
 * [Preprocessors](./RuleFunctions/Preprocessors) - This folder contains implementation of processors for CRUD operation events.
 * [Rules](./Rules) - This folder contains implementation of rules for updating application data.
-* [Test](./Test) - This folder contains test cases and data for functional tests.
+* [Test](./Test) - This folder contains test cases and data files used by functional tests.
 
-## Run Unit Tests
+## Build and Run Unit Tests
 
-Clone this repository, and import it into BE studio workspace, `$WS`, as a `Existing TIBCO BE Studio Project`.  Build the enterprise archive, e.g., `$WS/Books.ear`.
+Clone this repository, and import it into BE studio workspace, `$WS`, as an `Existing TIBCO BE Studio Project`.  Build the enterprise archive, e.g., `$WS/Books.ear`.
 
-Following steps uses Apache Ignite with no backing store.  Other persistence options are described in the above referenced `Wiki page`.
+Following steps use Apache Ignite with no backing store.  Other persistence options are described in the above referenced `Wiki page`.
 
 ### Start Ignite cache node
 
@@ -38,7 +38,7 @@ $BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n cache-0 -u cache
 
 ### Start query node (optional)
 
-This query node demonstrates `continuous query` that prints out object counts every time a concept is created.  The verboseness of the print out is configured in the query PU by the property `books.app.bql.callback.window = -1`.
+The query node demonstrates `continuous query` that prints out object counts every time a concept is created.  The verboseness of the print out is configured in the query PU by the property `books.app.bql.callback.window = -1`.
 
 Skip this step if you are not interested in `continuous query`.
 
@@ -48,7 +48,7 @@ $BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n query -u query -
 
 ### Start inference node
 
-This inference node contains an inference agent and a query agent, and so all queries are processed in the same node.
+The inference node contains an inference agent and a query agent, and so all queries are processed by the same node.
 
 ```
 $BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n default-0 -u default -c ${WS}/Books.cdd Books.ear
@@ -63,25 +63,25 @@ In the `Books.cdd`, a system property, `books.app.unitTests = true`, is set to s
    * Create a concept from JSON string - [onCreateConcept](./RuleFunctions/Preprocessors/onCreateConcept.rulefunction)
    * Multi-threaded operation using a local event channel - [onLoadFromFile](./RuleFunctions/Preprocessors/onLoadFromFile.rulefunction)
    * Create bulk of concepts in single RTC - [createConcepts](./RuleFunctions/Load/createConcepts.rulefunction)
-1. Create new revisions from query result:
-   * Create new revision of a concept by deep copy - [createRevisions](./RuleFunctions/createRevisions.rulefunction)
+1. [Create new revisions from query result](./Test/T02_RevisionTests.rule):
+   * Create new revisions of a concept by deep copy - [createRevisions](./RuleFunctions/createRevisions.rulefunction)
    * Retrieve primary keys by using native cache query or direct store query - [queryLimitedConceptIds](./Query/queryLimitedConceptIds.rulefunction)
-1. Update concepts by using rules:
+1. [Update concepts by using rules](./Test/T03_UpdateTests.rule):
    * Fetch concept by primary key in preprocessor - [onUpdateConcept](./RuleFunctions/Preprocessors/onUpdateConcept.rulefunction)
    * Update concept in rules - e.g., [UpdateAuthor](./Rules/UpdateAuthor.rule)
-1. Delete concepts:
-   * Fetch and delete a concept in preprocessor - [onDeleteConcept](./RuleFunctions/Preprocessors/onDeleteConcept)
+1. [Delete concepts](./Test/T04_DeleteTests.rule):
+   * Fetch and delete a concept in preprocessor - [onDeleteConcept](./RuleFunctions/Preprocessors/onDeleteConcept.rulefunction)
    * Delete bulk of concepts by using native cache query or direct store query - [deleteRevisions](./Query/deleteRevisions.rulefunction)
-1. Query concepts:
+1. [Query concepts](./Test/T05_QueryTests.rule):
    * Query concepts by using BQL - [queryConcepts](./Query/queryConcepts.rulefunction)
    * Invoke aggregate query by using preprocessor in query agent - [onAggregateQuery](./Query/Preprocessors/onAggregateQuery.rulefunction)
    * Retrieve column values by using native cache query or direct store query - [queryBooksByAuthor](./Query/queryBooksByAuthor.rulefunction)
-1. Revoke changes of concepts by modified date:
+1. [Revoke changes of concepts by modified date](./Test/T06_RevokeTests.rule):
    * Retrieve primary keys of modified concepts by using BQL or store query - [queryModifiedConceptIds](./Query/queryModifiedConceptIds.rulefunction)
    * Update bulk of concepts by asserting many concepts in a RTC - [onUpdateBatch](./RuleFunctions/Preprocessors/onUpdateBatch.rulefunction)
-1. Count concepts in cache and/or persistent store
+1. [Count concepts in cache and/or persistent store](./Test/T07_CountConcepts.rule):
    * Count concepts of a specified type by using native cache query or custom Java function - [countConcepts](./Query/countConcepts.rulefunction)
    * Query limited number of rows of a specified type by using native cache query or custom Java function - [queryTopRows](./Query/queryTopRows.rulefunction)
 1. Continuous Query in a query node
    * Set `books.app.bql.continuous.count = true` in a query agent
-   * The [callback function](./Query/bqlCallback) will be invoked when concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
+   * A callback function, [bqlCallback]](./Query/bqlCallback) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
