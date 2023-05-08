@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Concept xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/Concepts/" name="BookIdentifier" description="" GUID="7592A80A-FCB6-9358-B36F-AE69B9E58C83" ownerProjectName="Books" superConceptPath="" autoStartStateMachine="true">
+  <extendedProperties/>
+  <properties name="name" ownerProjectName="Books"/>
+  <properties name="ids" ownerProjectName="Books" array="true"/>
+</element:Concept>

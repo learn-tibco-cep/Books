@@ -1,0 +1,63 @@
+/**
+ * @description Use native query to bulk delete of concepts with revision < 0
+ *  This shows bulk delete without fetching concepts to inference/query engine.
+ */
+long rulefunction Query.deleteRevisions {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri;
+		String extId;
+	}
+	body {
+		Object logger = Log.getLogger("Query.deleteRevisions");
+
+		String suffix = String.substringAfter(entityUri,"/Concepts/");
+		if (String.length(suffix) < 0) {
+			Log.log(logger, "info", "Invalid entity URI: %s", entityUri);
+			return 0;
+		}
+
+		Object buff = String.createBuffer(128);
+		if (!GlobalValues.STORE_OM) {
+			// native query for Ignite cache
+			String.append(buff, "native-query: delete from be_gen_concepts_");
+		} else {
+			// SQL delete for AS store OM
+			String.append(buff, "delete from d_");
+		}
+		String.append(buff, String.toLowerCase(suffix));
+		String.append(buff, " where");
+		if (extId != null && extId != "") {
+			if (GlobalValues.STORE_OM) {
+				String.append(buff, String.format(" extid = '%s' and", extId));
+			} else {
+				String.append(buff, String.format(" _extId = '%s' and", extId));
+			}
+		}
+		String.append(buff, " revision < 0");
+		String sql = String.convertBufferToString(buff);
+		Log.log(logger, "debug", "execute query: %s", sql);
+		
+		if (GlobalValues.STORE_OM) {
+			// call custom function for bulk delete when AS4 store OM is used
+			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+			return CustomFunction.executeUpdate(session, sql, GlobalValues.QUERY_TIMEOUT*3);
+		}
+		
+		// For Ignite cache, send query to query agent named "query-class"
+		Object list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT*3);
+		
+		int size = Query.Util.sizeOfList(list);
+		long rows = 0;
+		if (size <= 0) {
+			Log.log(logger, "debug", "No result returned from query: %s", sql);
+		} else {
+			// delete query returns 1 number indicating the number of rows that are deleted
+			rows = Query.Util.removeFromList(list, 0);
+			Log.log(logger, "debug", "Deleted %s rows from %s", "" + rows, entityUri);
+		}
+		return rows;
+	}
+}

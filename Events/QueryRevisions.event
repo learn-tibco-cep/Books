@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="QueryRevisions" description="retrieve all revisons of an object id, e.g. /authors/OL2745108A" GUID="CDA2334B-1080-D3E9-AF39-622226728A9E" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="queryRevisions">
+  <properties name="oid" ownerProjectName="Books"/>
+  <expiryAction name="QueryRevisions_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="queryrevisions" type="/Events/QueryRevisions"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

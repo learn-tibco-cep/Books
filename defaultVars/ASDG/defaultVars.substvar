@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository xmlns="http://www.tibco.com/xmlns/repo/types/2002">
+    <globalVariables>
+        <globalVariable>
+            <name>realmurl</name>
+            <value>http://localhost:8181</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1680735831140</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>grid</name>
+            <value>perf-grid</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>false</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1680735851828</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>tibdg_timeout</name>
+            <value>30</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>false</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1682638039638</modTime>
+        </globalVariable>
+    </globalVariables>
+</repository>

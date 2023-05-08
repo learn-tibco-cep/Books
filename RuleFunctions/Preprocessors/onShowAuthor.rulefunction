@@ -1,0 +1,64 @@
+/**
+ * @description Fetch an author and all his/her books.  This demonstrates query xref table, then load multiple concepts in a single call to cache.
+ */
+void rulefunction RuleFunctions.Preprocessors.onShowAuthor {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.ShowAuthor evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onShowAuthor");
+		String extId = String.format("%s/%d", evt.author_id, evt.revision);
+		Log.log(logger, "debug", "Show author: %s", extId);
+		
+		long startTime = System.currentTimeMillis();
+		Object buff = String.createBuffer(1024);
+		String.append(buff, String.format("{\"author_id\": \"%s\", \"revision\": %d", evt.author_id, evt.revision));
+		
+		boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+		if (!locked) {
+			Log.log(logger, "warn", "Failed to LOCK Author %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			String.append(buff, ", \"error\": \"Lock timeout\"");
+		} else {
+			Concepts.Author author;
+			if (GlobalValues.LOCK_LOCAL) {
+				author = Instance.getByExtIdByUri(extId, "/Concepts/Author");
+			} else {
+				author = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, "/Concepts/Author");
+			}
+			if (author == null) {
+				Log.log(logger, "info", "Author not found: %s", extId);
+				String.append(buff, ", \"error\": \"Not found\"");
+			} else {
+				Log.log(logger, "debug", "Loaded author from cache: %s %d - %s", author.author_id, author.revision, author.name);
+				String.append(buff, String.format(", \"name\": \"%s\", \"edit_logs\": %d", author.name, author.edit_logs@length));
+				
+				String[] bExtIds = Query.queryBooksByAuthor(evt.author_id);
+				if (bExtIds != null && bExtIds@length > 0) {
+					String.append(buff, ", \"books\": [");
+					// TODO: bulk load does not work, so work-around to fetch individual book in a loop
+					// Concepts.Book[] books = Cluster.DataGrid.CacheLoadConceptsByExtIdByUri(bExtIds, "/Concepts/Book");
+					for (int i = 0; i < bExtIds@length; i++) {
+						Concepts.Book book = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(bExtIds[i], true, "/Concepts/Book");
+						Log.log(logger, "debug", "Book by %s: %s %d - %s, published on %s, %d pages", author.name, book.book_id, book.revision, book.title, book.publish_date, book.number_of_pages);
+						if (i > 0) {
+							String.append(buff, ", ");
+						}
+						String.append(buff, String.format("{\"book_id\": \"%s\", \"revision\": %d, \"title\": \"%s\"}", book.book_id, book.revision, book.title));
+					}
+					String.append(buff, "]");
+				}
+			}
+		}
+		long elapsed = System.currentTimeMillis()-startTime;
+		String.append(buff, String.format(", \"elapsed\": %d}", elapsed));
+		
+		// send reply and cleanup show book event
+		Log.log(logger, "debug", "Cleanup show author event for concept - %s", extId);
+		Event.replyEvent(evt, Events.ShowAuthor.ShowAuthor(null, String.convertBufferToString(buff), evt.author_id, evt.revision));
+		Event.consumeEvent(evt);
+		Log.log(logger, "info", "Show Author %s, elapsed %d ms", extId, elapsed);
+	}
+}

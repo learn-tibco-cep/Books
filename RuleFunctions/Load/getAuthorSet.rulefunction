@@ -1,0 +1,18 @@
+/**
+ * @description 
+ */
+Object rulefunction RuleFunctions.Load.getAuthorSet {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Object authorSet = Collections.Set.getSet("loadedAuthors");
+		if (authorSet == null) {
+			authorSet = Collections.Set.createHashSetWithId("loadedAuthors");
+		}
+		return authorSet;
+	}
+}

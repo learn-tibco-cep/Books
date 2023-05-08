@@ -1,0 +1,118 @@
+/**
+ * @description 
+ */
+Concepts.Work rulefunction RuleFunctions.Load.createWorkFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String ext;		
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.createWorkFromJSON");
+		Log.log(logger, "debug", "Create Work from JSON for key %s", ext);
+		
+		String oid = RuleFunctions.Load.getStringFromJSON(jsNode, "key");
+		long revision = RuleFunctions.Load.getLongFromJSON(jsNode, "revision");
+		if (ext != String.format("%s/%d", oid, revision)) {
+			Log.log(logger, "warn", "JSON object does not match specified work: %s", ext);
+			return null;
+		}
+		
+		Concepts.Work work = Instance.newInstance("/Concepts/Work", ext);
+		
+		// string fields
+		work.work_id = oid;
+		work.title = RuleFunctions.Load.getStringFromJSON(jsNode, "title");
+		work.subtitle = RuleFunctions.Load.getStringFromJSON(jsNode, "subtitle");
+		work.first_publish_date = RuleFunctions.Load.getStringFromJSON(jsNode, "first_publish_date");
+		work.description = RuleFunctions.Load.getStringFromJSON(JSON.getNode(jsNode, "description"), "value");
+		
+		// datetime fields
+		work.last_modified = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "last_modified");
+		work.created = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "created");
+
+		// numeric fields
+		work.revision = revision;
+			
+		long latest_revision = RuleFunctions.Load.getLongFromJSON(jsNode, "latest_revision");
+		if (latest_revision != -1) {
+			work.latest_revision = latest_revision;
+		}
+
+		// array fields
+		Object covers = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "covers"), null);
+		RuleFunctions.Load.appendToLongPropertyArray(work.covers, covers);
+		
+		Object lc_classifications = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "lc_classifications"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(work.lc_classifications, lc_classifications);
+		
+		Object subjects = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subjects"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(work.subjects, subjects);
+
+		Object subject_places = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subject_places"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(work.subject_places, subject_places);
+		
+		Object subject_people = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subject_people"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(work.subject_people, subject_people);
+		
+		Object subject_times = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subject_times"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(work.subject_times, subject_times);
+		
+		// contained concepts
+		Object authorNode = JSON.getNode(jsNode, "authors");
+		if (authorNode != null && JSON.isArrayNode(authorNode)) {
+			// create author roles
+			Object iter = JSON.getAllElements(authorNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String author = RuleFunctions.Load.getStringFromJSON(JSON.getNode(item, "author"), "key");
+				if (author == null || String.length(author) == 0) {
+					// ignore the item if no author id
+					continue;
+				}
+				String role = RuleFunctions.Load.getStringFromJSON(item, "role");
+				work.authors[work.authors@length] = Concepts.AuthorRole.AuthorRole(null, author, role);
+			}
+		}
+		
+		Object linkNode = JSON.getNode(jsNode, "links");
+		if (linkNode != null && JSON.isArrayNode(linkNode)) {
+			// create work links
+			Object iter = JSON.getAllElements(linkNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String linkUrl = RuleFunctions.Load.getStringFromJSON(item, "url");
+				if (linkUrl == null || String.length(linkUrl) == 0) {
+					// ignore the item if no url
+					continue;
+				}
+				String title = RuleFunctions.Load.getStringFromJSON(item, "title");
+				work.links[work.links@length] = Concepts.WorkLink.WorkLink(null, linkUrl, title);
+			}
+		}
+
+		Object excNode = JSON.getNode(jsNode, "excerpts");
+		if (excNode != null && JSON.isArrayNode(excNode)) {
+			// create excerpts
+			Object iter = JSON.getAllElements(excNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String excerpt = RuleFunctions.Load.getStringFromJSON(item, "excerpt");
+				if (excerpt == null || String.length(excerpt) == 0) {
+					// ignore the item if no excerpt
+					continue;
+				}
+				String comment = RuleFunctions.Load.getStringFromJSON(item, "comment");
+				String author = RuleFunctions.Load.getStringFromJSON(JSON.getNode(item, "author"), "key");
+				work.excerpts[work.excerpts@length] = Concepts.Excerpt.Excerpt(null, comment, excerpt, author);
+			}
+		}
+
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Loaded Work from JSON: %s", Instance.serializeToJSON(work, true, "work"));
+		}
+		return work;
+	}
+}

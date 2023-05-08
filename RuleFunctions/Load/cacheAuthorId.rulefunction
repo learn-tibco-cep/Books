@@ -1,0 +1,37 @@
+/**
+ * @description add author ID to in-memory set to support book skipping operations.
+ */
+void rulefunction RuleFunctions.Load.cacheAuthorId {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String line;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.cacheAuthorId");
+		
+		if (!GlobalValues.SKIP_BOOK_BY_AUTHOR) {
+			// configured not to skip any book
+			return;
+		}
+		if (!String.startsWith(line, "/type/author")) {
+			// not an author record
+			return;
+		}
+		
+		// extract authors ID
+		int p2 = 0;
+		int p1 = String.indexOfString(line, 0, "/authors/");
+		if (p1 > 0) {
+			p2 = String.indexOfString(line, p1, "\t");
+		}
+		if (p1 > 0 && p2 > p1) {
+			String aid = String.substring(line, p1, p1+p2);
+			Log.log(logger, "debug", "Extracted author ID: %s", aid);
+			
+			aid = String.substringAfter(aid, "/authors/");
+			Collections.add(RuleFunctions.Load.getAuthorSet(), aid);
+		}
+	}
+}

@@ -1,0 +1,16 @@
+/**
+ * @description add new stat batchId -> [count, size, start, minEnd, maxEnd]
+ */
+void rulefunction Stats.addBatch {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String batchId;
+		long batchSize;
+	}
+	body {
+		Object stats = Collections.Map.getMap("BatchStats");
+		Collections.Map.Concurrent.putIfAbsent(stats, batchId, long[]{0, batchSize, System.currentTimeMillis(), 0, 0});
+	}
+}

@@ -1,0 +1,64 @@
+/**
+ * @description
+ */
+void rulefunction Query.testStoreAPI {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Object logger = Log.getLogger("Test.testStoreAPI");
+		String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+		String grid = System.getGlobalVariableAsString("ASDG/grid", "");
+		if (url == "") {
+			Log.log(logger, "info", "Global variable 'ASDG/realmurl' is not configured");
+			return;
+		}
+		if (grid == "") {
+			grid = "_default";
+		}
+		
+//		Note: do not need to create connection if it is the same as store OM spec.
+//		Object conn = Store.ConnectionInfo.create(url, "AS");
+//		if (String.length(grid) > 0) {
+//			Store.ConnectionInfo.setName(conn, grid);
+//		}
+//		Store.connect(conn);
+//		Log.log(logger, "info", "connected to AS %s, grid %s", url, grid);
+
+		String sql = "delete from d_author where revision = -4";
+		Log.log(logger, "info", "Execute SQL delete: %s", sql);
+		
+//		TODO: possible bug - this store function does not work for SQL delete
+//		long result = Store.executeUpdate(url, sql);
+//		Object result = Store.query(url, sql, null, null, null);
+
+		// work-around to use custom function for SQL delete
+		Object session = CustomFunction.connectToAS(url, grid, null, null);
+		long count = CustomFunction.executeUpdate(session, sql, GlobalValues.QUERY_TIMEOUT);
+		Log.log(logger, "info", "SQL deleted %d rows", count);
+		
+//		TODO: possible bug - cannot extract the count by alias "c" in Item.getInteger()
+//		String sql = "select count(extid) as c from d_author where extid like '/authors/OL10000%'";
+
+		// store functions work fine to return values of object columns
+		sql = "select extid from d_author where revision > 0 and last_modified >= '2023-02-01T00:00:00'";
+		Log.log(logger, "info", "Execute query: %s", sql);
+		Object result = Store.query(url, sql, null, null, null);
+		
+		if (result == null) {
+			Log.log(logger, "info", "No result returned from query");
+		} else {
+			int i = 0;
+			while (Collections.Iterator.hasNext(result)) {
+				Object row = Collections.Iterator.next(result);
+				// Log.log(logger, "info", "Query result: %s", ""+row);
+				String value = Store.Item.getString(row, "extid");
+				i += 1;
+				Log.log(logger, "info", "Value of row %d: %s", i, value);
+			}
+		}
+	}
+}

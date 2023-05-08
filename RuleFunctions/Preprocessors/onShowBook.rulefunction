@@ -1,0 +1,48 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onShowBook {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.ShowBook evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onShowBook");
+		String extId = String.format("%s/%d", evt.book_id, evt.revision);
+		Log.log(logger, "debug", "Show book: %s", extId);
+		
+		long startTime = System.currentTimeMillis();
+		Object buff = String.createBuffer(256);
+		String.append(buff, String.format("{\"book_id\": \"%s\", \"revision\": %d", evt.book_id, evt.revision));
+		
+		boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+		if (!locked) {
+			Log.log(logger, "warn", "Failed to LOCK Book %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			String.append(buff, ", \"error\": \"Lock timeout\"");
+		} else {
+			Concepts.Book book;
+			if (GlobalValues.LOCK_LOCAL) {
+				book = Instance.getByExtIdByUri(extId, "/Concepts/Book");
+			} else {
+				book = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, "/Concepts/Book");
+			}
+			if (book == null) {
+				Log.log(logger, "debug", "Book not found: %s", extId);
+				String.append(buff, ", \"error\": \"Not found\"");
+			} else {
+				Log.log(logger, "debug", "Loaded book from cache: %s %d - titile: %s, published on %s", book.book_id, book.revision, book.title, book.publish_date);
+				String.append(buff, String.format(", \"title\": \"%s\", \"publish_date\": \"%s\", \"edit_logs\": %d", book.title, book.publish_date, book.edit_logs@length));
+			}
+		}
+		long elapsed = System.currentTimeMillis()-startTime;
+		String.append(buff, String.format(", \"elapsed\": %d}", elapsed));
+		
+		// send reply and cleanup show book event
+		Log.log(logger, "debug", "Cleanup show book event for concept - %s", extId);
+		Event.replyEvent(evt, Events.ShowBook.ShowBook(null, String.convertBufferToString(buff), evt.book_id, evt.revision));
+		Event.consumeEvent(evt);
+		Log.log(logger, "info", "Show Book %s, elapsed %d ms", extId, elapsed);
+	}
+}

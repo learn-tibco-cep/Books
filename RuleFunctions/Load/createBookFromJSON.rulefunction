@@ -1,0 +1,209 @@
+/**
+ * @description 
+ */
+ Concepts.Book rulefunction RuleFunctions.Load.createBookFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String ext;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.createBookFromJSON");
+		Log.log(logger, "debug", "Create Book from JSON for key %s", ext);
+		
+		String oid = RuleFunctions.Load.getStringFromJSON(jsNode, "key");
+		long revision = RuleFunctions.Load.getLongFromJSON(jsNode, "revision");
+		if (ext != String.format("%s/%d", oid, revision)) {
+			Log.log(logger, "warn", "JSON object does not match specified book: %s", ext);
+			return null;
+		}
+		
+		Concepts.Book book = Instance.newInstance("/Concepts/Book", ext);
+		
+		// string fields
+		book.book_id = oid;
+		book.title = RuleFunctions.Load.getStringFromJSON(jsNode, "title");
+		book.first_sentence = RuleFunctions.Load.getStringFromJSON(JSON.getNode(jsNode, "first_sentence"), "value");
+		book.ocaid = RuleFunctions.Load.getStringFromJSON(jsNode, "ocaid");
+		book.translation_of = RuleFunctions.Load.getStringFromJSON(jsNode, "translation_of");
+		book.by_statement = RuleFunctions.Load.getStringFromJSON(jsNode, "by_statement");
+		book.weight = RuleFunctions.Load.getStringFromJSON(jsNode, "weight");
+		book.edition_name = RuleFunctions.Load.getStringFromJSON(jsNode, "edition_name");
+		book.pagination = RuleFunctions.Load.getStringFromJSON(jsNode, "pagination");
+		book.physical_dimensions = RuleFunctions.Load.getStringFromJSON(jsNode, "physical_dimensions");
+		book.physical_format = RuleFunctions.Load.getStringFromJSON(jsNode, "physical_format");
+		book.copyright_date = RuleFunctions.Load.getStringFromJSON(jsNode, "copyright_date");
+		book.publish_country = RuleFunctions.Load.getStringFromJSON(jsNode, "publish_country");
+		book.publish_date = RuleFunctions.Load.getStringFromJSON(jsNode, "publish_date");
+		book.description = RuleFunctions.Load.getStringFromJSON(JSON.getNode(jsNode, "description"), "value");
+		book.notes = RuleFunctions.Load.getStringFromJSON(JSON.getNode(jsNode, "notes"), "value");
+		book.subtitle = RuleFunctions.Load.getStringFromJSON(jsNode, "subtitle");
+		
+		// datetime fields
+		book.last_modified = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "last_modified");
+		book.created = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "created");
+
+		// numeric fields
+		long number_of_pages = RuleFunctions.Load.getLongFromJSON(jsNode, "number_of_pages");
+		if (number_of_pages != -1) {
+			book.number_of_pages = number_of_pages;
+		}
+		book.revision = revision;
+		
+		long latest_revision = RuleFunctions.Load.getLongFromJSON(jsNode, "latest_revision");
+		if (latest_revision != -1) {
+			book.latest_revision = latest_revision;
+		}
+
+		// array fields
+		Object publishers = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "publishers"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.publishers, publishers);
+		
+		Object authors = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "authors"), "key");
+		RuleFunctions.Load.appendToStringPropertyArray(book.authors, authors);
+		if (revision >= 0) { // do not create xref for test data with negative revision
+			// dedup authors in bad data file
+			Object collected = Collections.Set.createHashSet();
+			for (int i = 0; i < book.authors@length; i++) {
+				String author = book.authors[i];
+				if (author == null || author == "" || Collections.contains(collected, author)) {
+					continue;
+				}
+				Collections.add(collected, author);
+				RuleFunctions.createBookAuthorXref(author, oid, revision);
+			}
+		}
+
+		Object works = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "works"), "key");
+		RuleFunctions.Load.appendToStringPropertyArray(book.works, works);
+
+		Object isbn_10 = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "isbn_10"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.isbn_10, isbn_10);
+		
+		Object isbn_13 = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "isbn_13"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.isbn_13, isbn_13);
+		
+		Object lccn = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "lccn"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.lccn, lccn);
+		
+		Object oclc_numbers = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "oclc_numbers"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.oclc_numbers, oclc_numbers);
+		
+		Object local_id = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "local_id"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.local_id, local_id);
+		
+		Object covers = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "covers"), null);
+		RuleFunctions.Load.appendToLongPropertyArray(book.covers, covers);
+		
+		Object languages = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "languages"), "key");
+		RuleFunctions.Load.appendToStringPropertyArray(book.languages, languages);
+
+		Object translated_from = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "translated_from"), "key");
+		RuleFunctions.Load.appendToStringPropertyArray(book.translated_from, translated_from);
+
+		Object subject_place = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subject_place"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.subject_place, subject_place);
+
+		Object contributions = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "contributions"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.contributions, contributions);
+
+		Object dewey_decimal_class = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "dewey_decimal_class"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.dewey_decimal_class, dewey_decimal_class);
+		
+		Object genres = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "genres"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.genres, genres);
+		
+		Object lc_classifications = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "lc_classifications"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.lc_classifications, lc_classifications);
+		
+		Object other_titles = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "other_titles"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.other_titles, other_titles);
+		
+		Object series = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "series"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.series, series);
+		
+		Object source_records = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "source_records"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.source_records, source_records);
+		
+		Object subjects = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subjects"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.subjects, subjects);
+
+		Object work_title = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "work_title"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.work_title, work_title);
+
+		Object url = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "url"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.url, url);
+
+		Object uris = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "uris"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.uris, uris);
+
+		Object uri_descriptions = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "uri_descriptions"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.uri_descriptions, uri_descriptions);
+
+		Object publish_places = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "publish_places"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.publish_places, publish_places);
+
+		Object subject_time = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "subject_time"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(book.subject_time, subject_time);
+
+		// contained concepts
+		Object tocNode = JSON.getNode(jsNode, "table_of_contents");
+		if (tocNode != null && JSON.isArrayNode(tocNode)) {
+			// create table of contents
+			Object iter = JSON.getAllElements(tocNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String title = RuleFunctions.Load.getStringFromJSON(item, "title");
+				if (title == null || String.length(title) == 0) {
+					// ignore the item if no title
+					continue;
+				}
+				long level = RuleFunctions.Load.getLongFromJSON(item, "level");
+				if (level < 0) {
+					level = 0;
+				}
+				book.table_of_contents[book.table_of_contents@length] = Concepts.TableOfContent.TableOfContent(null, title, level);
+			}
+		}
+		
+		Object linkNode = JSON.getNode(jsNode, "links");
+		if (linkNode != null && JSON.isArrayNode(linkNode)) {
+			// create book links
+			Object iter = JSON.getAllElements(linkNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String linkUrl = RuleFunctions.Load.getStringFromJSON(item, "url");
+				if (linkUrl == null || String.length(linkUrl) == 0) {
+					// ignore the item if no url
+					continue;
+				}
+				String title = RuleFunctions.Load.getStringFromJSON(item, "title");
+				book.links[book.links@length] = Concepts.BookLink.BookLink(null, linkUrl, title);
+			}
+		}
+
+		Object idsNode = JSON.getNode(jsNode, "identifiers");
+		if (idsNode != null && JSON.isObjectNode(idsNode)) {
+			// create book external identifiers
+			Object fields = JSON.getFields(idsNode);  // iterator for node property entry set
+			while (Collections.Iterator.hasNext(fields)) {
+				Object field = Collections.Iterator.next(fields);     // map entry of the next property
+				String name = Collections.Map.Entry.getKey(field);    // property name
+				Object value = Collections.Map.Entry.getValue(field); // property value is JSON array of strings
+				if (value != null && JSON.isArrayNode(value)) {
+					Concepts.BookIdentifier identifier = Concepts.BookIdentifier.BookIdentifier(null, name, String[]{});
+					Object ids = RuleFunctions.Load.getStringListFromJSON(value, null);
+					RuleFunctions.Load.appendToStringPropertyArray(identifier.ids, ids);
+					book.identifiers[book.identifiers@length] = identifier;
+				}
+			}
+		}
+
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Loaded Book from JSON: %s", Instance.serializeToJSON(book, true, "book"));
+		}
+		return book;
+	}
+}

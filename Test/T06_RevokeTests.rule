@@ -1,0 +1,21 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T06_RevokeTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "revoke";
+	}
+	then {
+		Test.testRevokeConcepts("/Concepts/Book");
+		Test.testRevokeConcepts("/Concepts/Work");
+		Test.testRevokeConcepts("/Concepts/Author");
+	}
+}

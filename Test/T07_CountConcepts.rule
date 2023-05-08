@@ -1,0 +1,22 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T07_CountConcepts {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "count";
+	}
+	then {
+		Event.sendEvent(Events.CountConcepts.CountConcepts(null, null, "/Concepts/Book", 0));
+		Event.sendEvent(Events.CountConcepts.CountConcepts(null, null, "/Concepts/Work", 0));
+		Event.sendEvent(Events.CountConcepts.CountConcepts(null, null, "/Concepts/Author", 0));
+		Query.queryTopRows("BookAuthorXref", "author_id,book_id,book_version", 5);
+	}
+}

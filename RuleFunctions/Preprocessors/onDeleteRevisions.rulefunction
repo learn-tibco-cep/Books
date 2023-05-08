@@ -1,0 +1,52 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onDeleteRevisions {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.DeleteRevisions evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onDeleteRevisions");
+
+		String extId;
+		if (evt.oid != null && evt.oid != "") {
+			extId = String.format("%s/%d", evt.oid, evt.revision);
+			Log.log(logger, "debug", "Delete revisions of concept: %s", evt.oid);
+		
+			if (evt.entityUri == null || evt.entityUri == "") {
+				// verify that evt.oid starts with /authors/, or /works/, or /books/
+				int pinx = String.indexOfString(evt.oid, 1, "/");
+				if (pinx < 1) {
+					Log.log(logger, "warn", "Failed to delete revision: Invalid object ID %s", evt.oid);
+				} else {
+					// determine the type of concept to be created
+					String prefix = String.substring(evt.oid, 0, pinx+1);
+					if (prefix == "/authors") {
+						evt.entityUri = "/Concepts/Author";
+					} else if (prefix == "/works") {
+						evt.entityUri = "/Concepts/Work";
+					} else if (prefix == "/books") {
+						evt.entityUri = "/Concepts/Book";
+					}
+				}
+			}
+		}
+		
+		long result = 0;
+		if (evt.entityUri == null || evt.entityUri == "") {
+			Log.log(logger, "warn", "Failed to delete revisions: entity URI not specified");
+		} else {
+			long startTime = System.currentTimeMillis();
+			result = Query.deleteRevisions(evt.entityUri, extId);
+			Log.log(logger, "info", "Deleted %d revisions of %s, elapsed %d ms", result, evt.entityUri, (System.currentTimeMillis() - startTime));
+		}
+		
+		// send reply and cleanup request
+		Log.log(logger, "debug", "Cleanup delete revisions event for entity - %s", evt.entityUri);
+		Event.replyEvent(evt, Events.DeleteRevisions.DeleteRevisions(null, null, evt.entityUri, evt.oid, evt.revision, result));
+		Event.consumeEvent(evt);
+	}
+}

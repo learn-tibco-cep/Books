@@ -1,0 +1,64 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onUpdateConcept {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.UpdateConcept evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onUpdateConcept");
+		
+		String extId = String.format("%s/%d", evt.oid, evt.revision);
+		Log.log(logger, "debug", "Update concept: %s", extId);
+
+		String conUri = null;
+		Concept con;
+		
+		// verify that evt.oid starts with /authors/, or /works/, or /books/
+		int pinx = String.indexOfString(evt.oid, 1, "/");
+		if (pinx < 1) {
+			Log.log(logger, "warn", "Failed to update concept: Invalid object ID %s", evt.oid);
+		} else {
+			// determine the type of concept to be created
+			String prefix = String.substring(evt.oid, 0, pinx+1);
+			if (prefix == "/authors") {
+				conUri = "/Concepts/Author";
+			} else if (prefix == "/works") {
+				conUri = "/Concepts/Work";
+			} else if (prefix == "/books") {
+				conUri = "/Concepts/Book";
+			}
+		}
+
+		if (conUri == null) {
+			Log.log(logger, "warn", "Failed to update concept: not supported type %s", evt.oid);
+		} else {
+			// lock if required
+			boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+			if (!locked) {
+				Log.log(logger, "warn", "Failed to LOCK concept %s for update after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			} else {
+				// fetch concept
+				if (GlobalValues.LOCK_LOCAL) {
+					con = Instance.getByExtIdByUri(extId, conUri);
+				} else {
+					con = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, conUri);
+				}
+			}
+		}
+								   
+		if (con == null) {
+			Log.log(logger, "warn", "Concept %s NOT Found for update", extId);
+			Event.replyEvent(evt, evt);
+			Event.consumeEvent(evt);
+		} else {
+			// set edit log if not already specified
+			if (evt.text == null || evt.text == "") {
+				evt.text = String.format("test-edit-%d", System.currentTimeMillis());
+			}
+		}
+	}
+}

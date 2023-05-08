@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="UpdateBatch" description="" GUID="AF97E956-6762-8A6A-174A-20E120B5A63D" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/Local" destinationName="batchUpdate">
+  <properties name="entityUri" ownerProjectName="Books"/>
+  <properties name="action" ownerProjectName="Books"/>
+  <properties name="text" ownerProjectName="Books"/>
+  <properties name="maxRev" ownerProjectName="Books" type="long"/>
+  <properties name="minRev" ownerProjectName="Books" type="long"/>
+  <expiryAction name="UpdateBatch_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="updatebatch" type="/Events/UpdateBatch"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

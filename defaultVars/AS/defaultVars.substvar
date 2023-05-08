@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository xmlns="http://www.tibco.com/xmlns/repo/types/2002">
+    <globalVariables>
+        <globalVariable>
+            <name>discovery</name>
+            <value>tibpgm://12122</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1636019524585</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>listen</name>
+            <value/>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1636019528009</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>remotelisten</name>
+            <value/>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1636019532938</modTime>
+        </globalVariable>
+    </globalVariables>
+</repository>

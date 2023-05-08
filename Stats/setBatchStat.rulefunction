@@ -1,0 +1,29 @@
+/**
+ * @description maintain stat batchId -> [count, size, start, minEnd, maxEnd]
+ */
+void rulefunction Stats.setBatchStat {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String batchId;
+		long timestamp;
+	}
+	body {
+		Object batchMap = Collections.Map.getMap("BatchStats");
+		boolean replaced = false;
+		while (!replaced) {
+			long[] stat = Collections.Map.get(batchMap, batchId);
+			if (stat[3] == 0) {
+				stat[3] = timestamp;
+			}
+			long[] newStat = long[]{stat[0] + 1, stat[1], stat[2], Math.minLong(stat[3], timestamp), Math.maxLong(stat[4], timestamp)};
+			replaced = Collections.Map.Concurrent.replaceIfEqualToGivenValue(batchMap, batchId, stat, newStat);
+			if (replaced && newStat[0] >= newStat[1]) {
+				// completed batch, so printout stats and remove the key
+				Collections.Map.Concurrent.remove(batchMap, batchId, newStat);
+				Stats.printBatchStat(batchId, newStat);
+			}
+		}
+	}
+}

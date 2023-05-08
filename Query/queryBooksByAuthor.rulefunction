@@ -1,0 +1,47 @@
+/**
+ * @description query BookAuthorXref to return extId of all books of a specified author
+ */
+String[] rulefunction Query.queryBooksByAuthor {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String author_id;
+	}
+	body {
+		Object logger = Log.getLogger("Query.queryBooksByAuthor");
+		
+		String aid = String.substringAfter(author_id,"/authors/");
+//		This BQL does not correctly use index, so it is slow		
+//		String sql = String.format("select x.book_id, x.book_version from /Concepts/BookAuthorXref as x where x.author_id = \"%s\"", aid);
+
+		long startTime = System.currentTimeMillis();
+		Object list = null;
+		if (!GlobalValues.STORE_OM) {
+			// use native query for better performance
+			String sql = String.format("native-query: select book_id, book_version from be_gen_concepts_bookauthorxref where author_id = '%s'", aid);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT);
+		} else {
+			// query AS data grid using custom function
+			String sql = String.format("select book_id, book_version from d_bookauthorxref where author_id = '%s'", aid);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+		}
+		
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			Log.log(logger, "info", "No book key found for author: %s, elpased %d ms", author_id, (System.currentTimeMillis()-startTime));
+			return null;
+		}
+		Log.log(logger, "info", "Author %s published %d books, elapsed %d ms", author_id, size, (System.currentTimeMillis()-startTime));
+		String[] bids = String[size]{};
+		for(int i = 0; i < size; i++) {
+			Object[] row = Query.Util.removeFromList(list, 0);
+			bids[i] = String.format("/books/%s/%d", row[0], row[1]);
+			Log.log(logger, "debug", "Author's book id %s", bids[i]);
+		}
+		return bids;
+	}
+}

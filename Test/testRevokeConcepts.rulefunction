@@ -1,0 +1,42 @@
+/**
+ * @description 
+ */
+void rulefunction Test.testRevokeConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri;  // e.g., /Concepts/Book
+	}
+	body {
+		Object logger = Log.getLogger("Test.testRevokeConcepts");
+		
+		// send sync HTTP request to delete edited revisions of specified entity
+		Object con = HTTP.ConnectionInfo.createHTTPConnectionInfo(false);
+		Events.DeleteRevisions req = Events.DeleteRevisions.DeleteRevisions(null, null, entityUri, null, 0, 0);
+		
+		int port = System.getGlobalVariableAsInt("http_port", 8000);
+		String url = String.format("http://localhost:%d/Channels/HTTP/deleteRevisions", port);
+		long startTime = System.currentTimeMillis();
+		Events.DeleteRevisions resp = HTTP.sendRequest(url, req, "/Events/DeleteRevisions", 10000, con);
+		if (resp != null) {
+			Log.log(logger, "info", "Deleted %d revisions from %s. Elapsed %d ms", resp.result, resp.entityUri, (System.currentTimeMillis() - startTime));
+		} else {
+			Log.log(logger, "warn", "Failed to delete revisions from %s", req.entityUri);
+		}
+		
+		String[] batch = Query.queryModifiedConceptIds(entityUri, DateTime.parseString("2023-03-29 00:00:00", "yyyy-MM-dd HH:mm:ss"), null);
+		for (int i = 0; i < batch@length; i++) {
+			Log.log(logger, "info", "Revoke changes in concepts %s", batch[i]);
+			Events.UpdateBatch evt = Events.UpdateBatch.UpdateBatch(
+				null /*extId String */,
+				batch[i] /*payload String */,
+				entityUri /*entityUri String */,
+				"revoke" /*action String */,
+				null /*text String */,
+				0 /*maxRev long */,
+				0 /*minRev long */);
+			Event.sendEvent(evt);
+		}
+	}
+}

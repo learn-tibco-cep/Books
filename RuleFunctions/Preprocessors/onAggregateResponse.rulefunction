@@ -1,0 +1,16 @@
+/**
+ * @description print out aggregate response from query agent
+ */
+void rulefunction RuleFunctions.Preprocessors.onAggregateResponse {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.AggregateResponse evt;
+	}
+	body {
+		Object logger = Log.getLogger("Query.Preprocessors.onAggregateResponse");
+		Log.log(logger, "info", "Received aggregate response for %s of %s, elapsed %d ms", evt.action, evt.entityUri, evt.elapsed);
+		Log.log(logger, "info", "Aggregation result: %s", evt@payload);
+	}
+}

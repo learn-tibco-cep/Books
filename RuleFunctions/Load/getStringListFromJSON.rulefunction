@@ -1,0 +1,32 @@
+/**
+ * @description return list of string by extracting specified field of a JSON array
+ */
+Object rulefunction RuleFunctions.Load.getStringListFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String field;		
+	}
+	body {
+		if (jsNode == null || !JSON.isArrayNode(jsNode)) {
+			// invalid JSON node
+			return null;
+		}
+		
+		Object result = Collections.List.createArrayList();
+		Object iter = JSON.getAllElements(jsNode);
+		while (Collections.Iterator.hasNext(iter)) {
+			String value = RuleFunctions.Load.getStringFromJSON(Collections.Iterator.next(iter), field);
+			if (value != null) {
+				Collections.add(result, value);
+			}
+		}
+		return result;
+		
+		// convert to String[]
+		// Object s = String[]{""};
+		// return Collections.toArray(result, s);
+	}
+}

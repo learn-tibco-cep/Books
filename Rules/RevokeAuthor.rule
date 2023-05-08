@@ -1,0 +1,31 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Rules.RevokeAuthor {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Events.RevokeConcept evt;
+		Concepts.Author author;
+	}
+	when {
+		evt.oid == author.author_id;
+		evt.revision == author.revision;
+	}
+	then {
+		Object logger = Log.getLogger("Rules.RevokeAuthor");
+		
+		int toRemove = author.edit_logs@length;
+		Instance.PropertyArray.clear(author.edit_logs);
+		Log.log(logger, "debug", "Revoked author %s removed %d edit_logs to %d", author@extId, toRemove, author.edit_logs@length);
+		
+		if (evt.batchId != null) {
+			Stats.setBatchStat(evt.batchId, System.currentTimeMillis());
+		}
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

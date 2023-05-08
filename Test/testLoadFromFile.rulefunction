@@ -1,0 +1,29 @@
+/**
+ * @description load all rows from test data file under /Test/Data
+ */
+void rulefunction Test.testLoadFromFile {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String file;     // file name under /Test/Data
+		String dataType; // authors, works, or books
+	}
+	body {
+		Object logger = Log.getLogger("Test.testLoadFromFile");
+		Log.log(logger, "info", "Send event to load data from file %s", file);
+		
+		String proj = System.getGlobalVariableAsString("FileLoader/project_root", "");
+		String path = String.format("%s/Test/Data/%s", proj, file);
+		
+		// load all rows in specified file
+		Events.Load.LoadFromFile evt = Events.Load.LoadFromFile.LoadFromFile(
+			null /*extId String */,
+			null /*payload String */,
+			path /*path String */,
+			0 /*skip long */,
+			-1 /*rows long */,
+			dataType /*dataType String */);
+		Event.sendEvent(evt);
+	}
+}

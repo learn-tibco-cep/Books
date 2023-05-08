@@ -1,0 +1,72 @@
+/**
+ * @description the aggregate query must be run in a query agent
+ */
+void rulefunction Query.Preprocessors.onAggregateQuery {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.AggregateQuery evt;
+	}
+	body {
+		Object logger = Log.getLogger("Query.Preprocessors.onAggregateQuery");
+		Log.log(logger, "info", "Received aggregate query %s, entity %s, field %s, filter %s, group by %s", 
+			evt.action, evt.entityUri, evt.filedName, evt.filter, evt.groupBy);
+		
+		String rs = String.format("%s-%s-%d", evt.action, evt.entityUri, System.currentTimeMillis());
+		long startTime = System.currentTimeMillis();
+		int cols = 1;
+		if (evt.action == "count") {
+			Query.Datagrid.Aggregate.count(rs, evt.entityUri);
+		} else if (evt.action == "filterCount") {
+			// e.g., entityUri = "/Concepts/Author", filter = "revision > 2"
+			Query.Datagrid.Aggregate.filterCount(rs, evt.entityUri, evt.filter);
+		} else if (evt.action == "groupCount") {
+			// e.g., groupBy = "location"
+			Query.Datagrid.Aggregate.groupCount(rs, evt.entityUri, null, evt.groupBy);
+			cols = 2;
+		} else {
+			Log.log(logger, "warn", "Aggregation query %s is not implemented", evt.action);
+		}
+		if (Query.ResultSet.isOpen(rs)) {
+			int rows = Query.ResultSet.getRowCountIfPossible(rs);
+			Log.log(logger, "debug", "Aggregation query %s returned %d rows", rs, rows);
+			
+			// construct JSON array containing all returned rows as CSV string
+			Object buff = String.createBuffer(128);
+			String.append(buff, "[");
+			boolean isFirst = true;
+			while (Query.ResultSet.next(rs)) {
+				if (isFirst) {
+					String.append(buff, "\"");
+					isFirst = false;
+				} else {
+					String.append(buff, ", \"");
+				}
+				// this call does not work, so rs column count is hardcoded above
+				// cols = Query.ResultSet.Metadata.getColumnCount(rs);
+				for (int i = 0; i < cols; i++) {
+					if (i > 0) {
+						String.append(buff, ", ");
+					}
+					String.append(buff, "" + Query.ResultSet.get(rs, i));
+				}
+				String.append(buff, "\"");
+			}
+			String.append(buff, "]");
+			Query.ResultSet.close(rs);
+			
+			// send response
+			Events.AggregateResponse resp = Events.AggregateResponse.AggregateResponse(
+				null /*extId String */,
+				String.convertBufferToString(buff) /*payload String */,
+				evt.action /*action String */,
+				evt.entityUri /*entityUri String */,
+				System.currentTimeMillis() - startTime /*elapsed long */);
+			Log.log(logger, "debug", resp@payload);
+			Event.sendEvent(resp);
+		} else {
+			Log.log(logger, "warn", "Failed to execute aggreagate query %s", rs);
+		}
+	}
+}

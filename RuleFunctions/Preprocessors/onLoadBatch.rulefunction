@@ -1,0 +1,17 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onLoadBatch {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.Load.LoadBatch evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onLoadBatch");
+		Log.log(logger, "debug", "Loading batch of %s", evt.dataType);
+		
+		RuleFunctions.Load.createConcepts(evt@payload, evt.dataType);
+	}
+}

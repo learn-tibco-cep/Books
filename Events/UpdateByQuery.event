@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="UpdateByQuery" description="" GUID="43EAE59C-6D58-2B4C-8986-874AF8C41A91" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="updateByQuery">
+  <properties name="entityUri" ownerProjectName="Books"/>
+  <properties name="action" ownerProjectName="Books"/>
+  <properties name="limit" ownerProjectName="Books" type="long"/>
+  <properties name="offset" ownerProjectName="Books" type="long"/>
+  <properties name="minDate" ownerProjectName="Books" type="DateTime"/>
+  <properties name="maxDate" ownerProjectName="Books" type="DateTime"/>
+  <properties name="text" ownerProjectName="Books"/>
+  <properties name="minRev" ownerProjectName="Books" type="long"/>
+  <properties name="maxRev" ownerProjectName="Books" type="long"/>
+  <expiryAction name="UpdateByQuery_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="updatebyquery" type="/Events/UpdateByQuery"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

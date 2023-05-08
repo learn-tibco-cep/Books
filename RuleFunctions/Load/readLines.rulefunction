@@ -1,0 +1,76 @@
+/**
+ * @description 
+ */
+String rulefunction RuleFunctions.Load.readLines {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object fd;
+		long rows;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.readLines");
+		Log.log(logger, "debug", "Reading %d lines from file", rows);
+		
+		if (fd == null) {
+			Log.log(logger, "warn", "Cannot read from invalid file");
+			return null;
+		}
+
+		Object buff = String.createBuffer(1000);
+		if (rows != 1) {
+			// collect multiple rows to JSON array
+			String.append(buff, "[");
+		}
+		
+		// number of loaded authors
+		long authors = 0;
+		if (GlobalValues.SKIP_BOOK_BY_AUTHOR) {
+			authors = Collections.size(RuleFunctions.Load.getAuthorSet());
+		}
+		
+		long c = 0;
+		long r = 0;
+		long startTime = System.currentTimeMillis();
+		while (rows <= 0 || c < rows) {
+			String line = File.fileReadLine(fd);
+			Log.log(logger, "debug", "returned line: %s", line);
+			
+			if (line == null) {
+				Log.log(logger, "info", "Reached end of file");
+				if (c == 0) {
+					return null;
+				} else {
+					break;
+				}
+			} else {
+				r = r + 1;
+				if (GlobalValues.SKIP_BOOK_BY_AUTHOR) {
+					RuleFunctions.Load.cacheAuthorId(line);
+					if (authors > 1000) {
+						// do not skip any book if author set is small
+						if (RuleFunctions.Load.skipBookByAuthor(line)) {
+							continue;
+						}
+					}
+				}
+
+				// find start location of JSON object 
+				int pos = String.indexOfString(line, 0, "{");
+				if (pos >= 0) {
+					if (c > 0) {
+						String.append(buff, ",");
+					}
+					c = c + 1;
+					String.append(buff, String.substring(line, pos, String.length(line)));
+				}
+			}
+		}
+		if (rows != 1) {
+			String.append(buff, "]");
+		}
+		Log.log(logger, "info", "Read %d of %d records, elapsed %d ms", c, r, (System.currentTimeMillis()-startTime));
+		return String.convertBufferToString(buff);
+	}
+}

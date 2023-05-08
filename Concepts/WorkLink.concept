@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Concept xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/Concepts/" name="WorkLink" description="" GUID="DFBC247C-C3F9-20F9-F254-D8AF8838F349" ownerProjectName="Books" superConceptPath="/Concepts/Link" autoStartStateMachine="true">
+  <extendedProperties/>
+</element:Concept>

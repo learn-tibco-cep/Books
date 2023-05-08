@@ -1,0 +1,90 @@
+/**
+ * @description Performance test: Update/create specified rows of existing concepts as follows:
+ *   action = update:
+ *            query rows specified by limit & offset; batch update rows with specified 'text' or default note 'batch-edit'
+ *   action = revision:
+ *            query rows specified by limit & offset; batch create revisions specified by minRev & maxRev or default revisions [-3, -1]
+ *   action = revoke:
+ *            query rows specified by minDate & maxDate; batch revoke all edit notes
+ */
+void rulefunction RuleFunctions.Preprocessors.onUpdateByQuery {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.UpdateByQuery evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onUpdateByQuery");
+		long startTime = System.currentTimeMillis();
+		if (evt.action == "update") {
+			Log.log(logger, "debug", "Batch %s for entity %s: %d rows with offset %d", evt.action, evt.entityUri, evt.limit, evt.offset);
+			String[] batch = Query.queryLimitedConceptIds(evt.entityUri, evt.limit, evt.offset);
+			if (batch != null) {
+				for (int i = 0; i < batch@length; i++) {
+					Log.log(logger, "debug", "Update concepts %s", batch[i]);
+					Events.UpdateBatch rev = Events.UpdateBatch.UpdateBatch(
+						null /*extId String */,
+						batch[i] /*payload String */,
+						evt.entityUri /*entityUri String */,
+						evt.action /*action String */,
+						evt.text /*text String */,
+						0 /*maxRev long */,
+						0 /*minRev long */);
+					Event.sendEvent(rev);
+				}
+				Log.log(logger, "info", "Dispatched %d events to update %d %s records, elapsed %d ms", batch@length, evt.limit, evt.entityUri, (System.currentTimeMillis() - startTime));
+			}
+		} else if (evt.action == "revision") {
+			Log.log(logger, "info", "Batch %s [%d, %d] for entity %s: %d rows with offset %d", evt.action, evt.minRev, evt.maxRev, evt.entityUri, evt.limit, evt.offset);
+			String[] batch = Query.queryLimitedConceptIds(evt.entityUri, evt.limit, evt.offset);
+			if (batch != null) {
+				for (int i = 0; i < batch@length; i++) {
+					Log.log(logger, "debug", "Create revisions for concepts %s", batch[i]);
+					Events.UpdateBatch rev = Events.UpdateBatch.UpdateBatch(
+						null /*extId String */,
+						batch[i] /*payload String */,
+						evt.entityUri /*entityUri String */,
+						evt.action /*action String */,
+						null /*text String */,
+						evt.maxRev /*maxRev long */,
+						evt.minRev /*minRev long */);
+					Event.sendEvent(rev);
+				}
+				long count = evt.limit * (evt.maxRev - evt.minRev + 1);
+				Log.log(logger, "info", "Dispatched %d events to create %d %s revisions, elapsed %d ms", batch@length, count, evt.entityUri, (System.currentTimeMillis() - startTime));
+			}
+		} else if (evt.action == "revoke") {
+			String minDate;
+			String maxDate;
+			if (evt.minDate != null) {
+				minDate = DateTime.format(evt.minDate, "yyyy-MM-dd HH:mm:ss");
+			}
+			if (evt.maxDate != null) {
+				maxDate = DateTime.format(evt.maxDate, "yyyy-MM-dd HH:mm:ss");
+			}
+			Log.log(logger, "debug", "Batch %s for entity %s modified between [%s, %s]", evt.action, evt.entityUri, minDate, maxDate);
+			String[] batch = Query.queryModifiedConceptIds(evt.entityUri, evt.minDate, evt.maxDate);
+			if (batch != null) {
+				for (int i = 0; i < batch@length; i++) {
+					Log.log(logger, "debug", "Revoke changes in concepts %s", batch[i]);
+					Events.UpdateBatch rev = Events.UpdateBatch.UpdateBatch(
+						null /*extId String */,
+						batch[i] /*payload String */,
+						evt.entityUri /*entityUri String */,
+						evt.action /*action String */,
+						null /*text String */,
+						0 /*maxRev long */,
+						0 /*minRev long */);
+					Event.sendEvent(rev);
+				}
+				Log.log(logger, "info", "Dispatched %d events to revoke %s modified in [%s, %s], elapsed %d ms", batch@length, evt.entityUri, minDate, maxDate, (System.currentTimeMillis() - startTime));
+			}
+		} else {
+			Log.log(logger, "info", "Not supported batch operation: %s", evt.action);
+		}
+		
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

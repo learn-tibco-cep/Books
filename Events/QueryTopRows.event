@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="QueryTopRows" description="" GUID="86C2EE0F-87D9-D2D9-1E00-83B06A6CBC54" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="queryTopRows">
+  <properties name="name" ownerProjectName="Books"/>
+  <properties name="columns" ownerProjectName="Books"/>
+  <properties name="limit" ownerProjectName="Books" type="long"/>
+  <expiryAction name="QueryTopRows_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="querytoprows" type="/Events/QueryTopRows"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

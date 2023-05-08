@@ -1,0 +1,45 @@
+/**
+ * @description 
+ */
+Object rulefunction RuleFunctions.Load.createConceptFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String prefix;  // authors, works, or books
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.createConceptFromJSON");
+		Log.log(logger, "debug", "Create concept from JSON for key prefix %s", prefix);
+		
+		// validate object key
+		String oid = RuleFunctions.Load.getStringFromJSON(jsNode, "key");
+		if (oid == null) {
+			Log.log(logger, "warn", "Ignore JSON of missing key field");
+			return null;
+		}
+		if (!String.startsWith(oid, "/" + prefix)) {
+			Log.log(logger, "warn", "Ignore key %s: not matching prefix %s", oid, prefix);
+			return null;			
+		}
+		
+		// create a Author, Work, or Book based on the prefix
+		long revision = RuleFunctions.Load.getLongFromJSON(jsNode,"revision");
+		if (revision < 0) {
+			revision = 0;
+		}
+		String ext = String.format("%s/%d", oid, revision);
+		if (prefix == "authors") {
+			return RuleFunctions.Load.createAuthorFromJSON(jsNode, ext);
+		} else if (prefix == "works") {
+			return RuleFunctions.Load.createWorkFromJSON(jsNode, ext);
+		} else if (prefix == "books") {
+			return RuleFunctions.Load.createBookFromJSON(jsNode, ext);
+		}
+		
+		// should not come here
+		Log.log(logger, "warn", "Prefix '%s' is not supported", prefix);
+		return null;
+	}
+}

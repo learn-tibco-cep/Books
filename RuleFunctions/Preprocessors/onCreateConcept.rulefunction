@@ -1,0 +1,95 @@
+/**
+ * @description create an author, work, or book from keys and JSON payload of an event.
+ *   If concept exists already and maxNewRev < 0, reate multiple revisions of the existing concept. 
+ */
+void rulefunction RuleFunctions.Preprocessors.onCreateConcept {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.CreateConcept evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onCreateConcept");
+
+		String extId = String.format("%s/%d", evt.oid, evt.revision);
+		Log.log(logger, "debug", "Create concept: %s", extId);
+		
+		String prefix = null;
+		String conUri = null;
+		
+		// verify that evt.oid starts with /authors/, or /works/, or /books/
+		int pinx = String.indexOfString(evt.oid, 1, "/");
+		if (pinx < 1) {
+			Log.log(logger, "warn", "Failed to create concept: Invalid object ID %s", evt.oid);
+		} else {
+			// determine the type of concept to be created
+			prefix = String.substring(evt.oid, 0, pinx+1);
+			if (prefix == "/authors") {
+				conUri = "/Concepts/Author";
+			} else if (prefix == "/works") {
+				conUri = "/Concepts/Work";
+			} else if (prefix == "/books") {
+				conUri = "/Concepts/Book";
+			}
+		}
+		
+		if (conUri == null) {
+			Log.log(logger, "warn", "Failed to create concept: not supported type %s", evt.oid);
+		} else {
+			// lock if required
+			boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+			if (!locked) {
+				Log.log(logger, "warn", "Failed to LOCK Concept %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			} else {
+				// check existence if required
+				boolean skip = false;
+				if (evt.maxNewRev < 0 || GlobalValues.ENSURE_NOTEXISTS_BEFORE_INSERT) {
+					Concept con;
+					if (GlobalValues.LOCK_LOCAL) {
+						con = Instance.getByExtIdByUri(extId, conUri);
+					} else {
+						con = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, conUri);
+					}
+					if (con != null) {
+						Log.log(logger, "debug", "Concept already exists: %s", extId);
+						skip = true;
+						if (evt.maxNewRev < 0) {
+							// create batch of new revisions for existing concept
+							Log.log(logger, "debug", "Create revisions [%d, %d] for %s ", evt.minNewRev, evt.maxNewRev, extId);
+							RuleFunctions.createRevisions(con, evt.maxNewRev, evt.minNewRev);
+						}
+					}
+				}
+
+				if (skip || GlobalValues.SKIP_DATA_RECORDS) {
+					Log.log(logger, "debug", "Skipped creation of concept: %s", extId);
+				} else {
+					// create concept from JSON payload
+					try {
+						Object root = JSON.parseJSON(evt@payload);
+						if (JSON.isObjectNode(root)) {
+							Log.log(logger, "debug", "Create concept %s of prefix %s", extId, prefix);
+							if (prefix == "/authors") {
+								RuleFunctions.Load.createAuthorFromJSON(root, extId);
+							} else if (prefix == "/works") {
+								RuleFunctions.Load.createWorkFromJSON(root, extId);
+							} else if (prefix == "/books") {
+								RuleFunctions.Load.createBookFromJSON(root, extId);
+							}
+						} else {
+							Log.log(logger, "warn", "Event payload is not a JSON object for concept: %s", extId);
+						}
+					} catch (Exception e) {
+						Log.log(logger, "warn", "Event payload is not a valid JSON string - %s", e@message);
+					}
+				}
+			}
+		}
+		
+		// send reply and cleanup request
+		Log.log(logger, "debug", "Cleanup creation event for concept - %s", extId);
+		Event.replyEvent(evt, Events.CreateConcept.CreateConcept(null, null, evt.oid, evt.revision, evt.maxNewRev, evt.minNewRev));
+		Event.consumeEvent(evt);
+	}
+}

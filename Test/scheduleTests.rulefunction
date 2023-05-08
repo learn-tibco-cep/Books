@@ -1,0 +1,20 @@
+/**
+ * @description schedule timer for unit tests at engine startup
+ */
+void rulefunction Test.scheduleTests {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Test.TestScheduler.scheduleTestScheduler(10000, "load", 0);
+		Test.TestScheduler.scheduleTestScheduler(15000, "revision", 0);
+		Test.TestScheduler.scheduleTestScheduler(20000, "update", 0);
+		Test.TestScheduler.scheduleTestScheduler(25000, "delete", 0);
+		Test.TestScheduler.scheduleTestScheduler(30000, "query", 0);
+		Test.TestScheduler.scheduleTestScheduler(35000, "revoke", 0);
+		Test.TestScheduler.scheduleTestScheduler(40000, "count", 0);
+	}
+}

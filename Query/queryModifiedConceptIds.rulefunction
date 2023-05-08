@@ -1,0 +1,74 @@
+/**
+ * @description query and return extId of specified concepts modified later than specified dateTime
+ */
+String[] rulefunction Query.queryModifiedConceptIds {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri;   // e.g., /Concepts/Author
+		DateTime minDate;   // e.g., DateTime.parseString("2023-03-29 00:00:00", "yyyy-MM-dd HH:mm:ss")
+		DateTime maxDate;
+	}
+	body {
+		Object logger = Log.getLogger("Query.queryModifiedConceptIds");
+		
+		if (minDate == null) {
+			Log.log(logger, "info", "Ingore request with no date specified");
+			return null;
+		}
+		
+		Object list;
+		if (GlobalValues.STORE_OM) {
+			// use store function to query ActiveSpaces directly, because BQL does not work for dateTime on AS4.
+			String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+			if (url == "") {
+				Log.log(logger, "info", "Ingore request - ActiveSpaces realm URL is not configured");
+				return null;
+			}
+			String sql = String.format("select extid from d_%s where last_modified >= '%s'", 
+				String.toLowerCase(String.substringAfter(entityUri, "/Concepts/")), 
+				DateTime.format(minDate, "yyyy-MM-dd"));
+			if (maxDate != null) {
+				sql += String.format(" and last_modified <= '%s'", DateTime.format(maxDate, "yyyy-MM-dd"));
+			}
+			sql += " and revision > 0";
+			Log.log(logger, "info", "Execute query %s", sql);
+			Object result = Store.query(url, sql, null, null, null);
+		
+			if (result == null) {
+				Log.log(logger, "info", "No result returned from query");
+				return null;
+			} else {
+				list = Collections.List.createArrayList();
+				int i = 0;
+				while (Collections.Iterator.hasNext(result)) {
+					Object row = Collections.Iterator.next(result);
+					String value = Store.Item.getString(row, "extid");
+					Collections.add(list, value);
+					i += 1;
+					Log.log(logger, "debug", "Value of row %d: %s", i, value);
+				}
+				Log.log(logger, "info", "Query returned %d records", i);
+			}
+		} else {
+			// use BQL to query Ignite cache
+			long tm = DateTime.getTimeInMillis(minDate);
+			String sql = String.format("select x@extId from %s as x where x.revision > 0 and x.last_modified >= /#DateTime/parseLong(%d)", entityUri, tm);
+			if (maxDate != null) {
+				long tmm = DateTime.getTimeInMillis(maxDate);
+				sql += String.format(" and x.last_modified <= /#DateTime/parseLong(%d)", tmm);
+			}
+
+			Log.log(logger, "debug", "Execute query %s", sql);
+			list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT);
+		
+			int size = Query.Util.sizeOfList(list);
+			if (size <= 0) {
+				Log.log(logger, "info", "No concept found modified after %s for %s", DateTime.format(minDate, "yyyy-MM-dd"), entityUri);
+				return null;
+			}
+		}
+		return Query.listToBatchJSON(list);
+	}
+}

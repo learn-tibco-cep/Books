@@ -1,0 +1,66 @@
+/**
+ * @description query limited number of rows, return results in JSON string
+ */
+String rulefunction Query.queryTopRows {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String name;     // concept name, e.g., Author, Work, Book, or BookAutherXref
+		String columns;  // comma-delimited column names, e.g., book_id,revision
+		long limit;      // number of rows to return
+	}
+	body {
+		Object logger = Log.getLogger("Query.queryTopRows");
+
+		long startTime = System.currentTimeMillis();
+		Object list = null;
+		if (!GlobalValues.STORE_OM) {
+			// use native query on cache
+			String sql = String.format("native-query: select %s from be_gen_concepts_%s limit %d", columns, name, limit);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT);
+		} else {
+			// query statement for AS data grid
+			String sql = String.format("select %s from d_%s limit %d", columns, name, limit);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+		}
+		
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			Log.log(logger, "info", "No record found for %s, elpased %d ms", name, (System.currentTimeMillis()-startTime));
+			return null;
+		}
+		Log.log(logger, "info", "query returned %d rows of %s, elapsed %d ms", size, name, (System.currentTimeMillis()-startTime));
+		
+		Object buff = String.createBuffer(1024);
+		String[] props = String.split(columns, ",");
+		String.append(buff, "[");
+		for (int i = 0; i < size; i++) {
+			if (i > 0) {
+				String.append(buff, ", ");
+			}
+			Object[] row = Query.Util.removeFromList(list, 0);
+			if (props@length > 1) {
+				// construct object with multiple elements
+				String.append(buff, "{");
+				for (int p = 0; p < props@length; p++) {
+					if (p > 0) {
+						String.append(buff, ", ");
+					}
+					String.append(buff, String.format("\"%s\": \"%s\"", props[p], row[p]));
+				}
+				String.append(buff, "}");
+			} else {
+				// add single column string
+				String.append(buff, String.format("\"%s\"", row[0]));
+			}
+		}
+		String.append(buff, "]");
+		String result = String.convertBufferToString(buff);
+		Log.log(logger, "debug", "Query returned %d records: %s", size, result);
+		return result;
+	}
+}

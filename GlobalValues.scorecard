@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Scorecard xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/" name="GlobalValues" description="" GUID="244A6FF2-A0CA-2839-9308-E3E5C69356ED" ownerProjectName="Books" scorecard="true">
+  <properties name="RUN_UNIT_TESTS_ON_START" ownerProjectName="Books" type="boolean"/>
+  <properties name="SKIP_LOCKS" ownerProjectName="Books" type="boolean"/>
+  <properties name="LOCK_WAIT_TIMEOUT" ownerProjectName="Books" type="long"/>
+  <properties name="ENSURE_NOTEXISTS_BEFORE_INSERT" ownerProjectName="Books" type="boolean"/>
+  <properties name="SKIP_DATA_RECORDS" ownerProjectName="Books" type="boolean"/>
+  <properties name="LOCK_LOCAL" ownerProjectName="Books" type="boolean"/>
+  <properties name="FILE_LOAD_BATCH" ownerProjectName="Books" type="int"/>
+  <properties name="CONCEPT_UPDATE_BATCH" ownerProjectName="Books" type="int"/>
+  <properties name="STORE_OM" ownerProjectName="Books" type="boolean"/>
+  <properties name="QUERY_TIMEOUT" ownerProjectName="Books" type="long"/>
+  <properties name="SKIP_BOOK_BY_AUTHOR" ownerProjectName="Books" type="boolean"/>
+  <properties name="USE_AUTHOR_PK" ownerProjectName="Books" type="boolean"/>
+  <properties name="USE_BOOK_PK" ownerProjectName="Books" type="boolean"/>
+</element:Scorecard>

@@ -1,0 +1,43 @@
+/**
+ * @description create multiple new revisions of an entity.
+ */
+void rulefunction RuleFunctions.createRevisions {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Concept con;
+		long maxNewRev;
+		long minNewRev;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.createRevisions");
+		
+		if (con == null) {
+			Log.log(logger, "info", "Cannot create revisions for null concept");
+			return;
+		}
+		
+		if (maxNewRev < minNewRev) {
+			Log.log(logger, "warn", "Failed to create new revisions: maxNewRev %d is less than minNewRev %d", maxNewRev, minNewRev);
+			return;
+		}
+
+		int idx = String.lastIndexOfString(con@extId, 0, "/");
+		String oid = String.left(con@extId, idx);
+		Log.log(logger, "debug", "Create revisions for concept: %s", oid);
+
+		String data = Instance.serializeToJSON(con, true, null);
+		String typeName = Instance.getExpandedName(con);
+		int pidx = String.lastIndexOfString(typeName, 0, "/");
+		String conUri = "/Concepts" + String.substring(typeName, pidx, String.length(typeName));
+		for (long i = maxNewRev; i >= minNewRev; i--) {
+			Concept newCon = Instance.createInstanceFromJSON(conUri, data);
+			String newExtId = String.format("%s/%d", oid, i);
+			Object rev = Instance.Reflection.getProperty(newCon, "revision");
+			Instance.PropertyAtom.setLong(rev, i, 0);
+			CustomFunction.setExtId(newCon, newExtId);
+			Log.log(logger, "debug", "created new revision: %s", newCon@extId);
+		}
+	}
+}

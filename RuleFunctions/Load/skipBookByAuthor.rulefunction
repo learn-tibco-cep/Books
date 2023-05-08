@@ -1,0 +1,58 @@
+/**
+ * @description 
+ */
+boolean rulefunction RuleFunctions.Load.skipBookByAuthor {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String line;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.skipBookByAuthor");
+		
+		if (!GlobalValues.SKIP_BOOK_BY_AUTHOR) {
+			// configured not to skip any book
+			return false;
+		}
+		if (!String.startsWith(line, "/type/edition")) {
+			// not a book record
+			return false;
+		}
+		
+		// find authors array
+		int p1 = 0;
+		int p2 = 0;
+		int a = String.indexOfString(line, 0, "\"authors\":");
+		if (a > 0) {
+			p1 = String.indexOfString(line, a, "[");
+			p2 = String.indexOfString(line, a, "]");
+		}
+		if (p1 > 0 && p2 > p1) {
+			String authors = String.substring(line, a+p1, a+p2+1);
+			Log.log(logger, "debug", "Extracted authors: %s", authors);
+			
+			try {
+				Object jsNode = JSON.parseJSON(authors);
+				Object list = RuleFunctions.Load.getStringListFromJSON(jsNode, "key");
+				if (list != null) {
+					Object iter = Collections.iterator(list);
+					while (Collections.Iterator.hasNext(iter)) {
+						String aid = Collections.Iterator.next(iter);
+						Log.log(logger, "debug", "Verify author: %s", aid);
+						aid = String.substringAfter(aid, "/authors/");
+						if (Collections.contains(RuleFunctions.Load.getAuthorSet(), aid)) {
+							return false;
+						}
+					}
+				}
+			} catch (Exception e) {
+				Log.logException(logger, "warn", "Ignore invalid JSON string - %s", e, authors);
+				return false;
+			}
+		}
+		
+		// no author is loaded for the book, so skip it
+		return true;
+	}
+}

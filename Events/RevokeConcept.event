@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="RevokeConcept" description="" GUID="60C0D392-F1EB-20B9-CCF2-08C9762F29BA" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="revokeConcept">
+  <properties name="oid" ownerProjectName="Books"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <properties name="batchId" ownerProjectName="Books"/>
+  <expiryAction name="RevokeConcept_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="revokeconcept" type="/Events/RevokeConcept"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

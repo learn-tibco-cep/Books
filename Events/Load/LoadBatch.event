@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/Load/" name="LoadBatch" description="" GUID="5EDF78A5-C185-C267-FF09-2D081BDD5361" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/Local" destinationName="batchLoad">
+  <properties name="dataType" ownerProjectName="Books"/>
+  <expiryAction name="LoadBatch_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="loadbatch" type="/Events/Load/LoadBatch"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

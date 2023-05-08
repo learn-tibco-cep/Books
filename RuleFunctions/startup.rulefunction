@@ -1,0 +1,87 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.startup {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+
+	}
+	body {
+		boolean useLegacy = System.getSystemPropertyAsBoolean("be.engine.id.useLegacy", false);
+		if (useLegacy) {
+			GlobalValues.USE_AUTHOR_PK = false;
+			GlobalValues.USE_BOOK_PK = false;
+		} else {
+			GlobalValues.USE_AUTHOR_PK = true;
+			GlobalValues.USE_BOOK_PK = true;
+		}
+		
+		GlobalValues.RUN_UNIT_TESTS_ON_START = System.getSystemPropertyAsBoolean("books.app.unitTests", false);
+				
+		// Whether to skip the cluster wide locks
+		GlobalValues.SKIP_LOCKS = System.getSystemPropertyAsBoolean("books.app.skipLocks", false);
+		
+		// Applicable only when SKIP_LOCKS is false; Timeout to wait for lock.
+		GlobalValues.LOCK_WAIT_TIMEOUT = System.getSystemPropertyAsLong("books.app.lockWaitMillis", 10000);
+		
+		// true if deployed as in-memory mode, and so locks are local in individual engine.
+		GlobalValues.LOCK_LOCAL = System.getSystemPropertyAsBoolean("books.app.lockLocal", false);
+
+		// true if deployed in store OM mode without Ignite cache.
+		GlobalValues.STORE_OM = System.getSystemPropertyAsBoolean("books.app.storeOM", false);
+		
+		// Ensure doesn't already exists before insert, only for Author
+		GlobalValues.ENSURE_NOTEXISTS_BEFORE_INSERT = System.getSystemPropertyAsBoolean("books.app.ensure.notExists", true);
+		
+		// Ensure doesn't already exists before insert, only for Author
+		GlobalValues.SKIP_DATA_RECORDS = System.getSystemPropertyAsBoolean("books.app.skipDataRecords", false);
+		
+		// Batch size for loading data from file
+		GlobalValues.FILE_LOAD_BATCH = System.getSystemPropertyAsLong("books.app.fileLoader.batchSize", 100);
+
+		// Batch size for updating concepts, e.g., making or revoking modifications to books, authors, and works
+		GlobalValues.CONCEPT_UPDATE_BATCH = System.getSystemPropertyAsLong("books.app.update.batchSize", 100);
+
+		// Timeout to wait for result from query agent.
+		GlobalValues.QUERY_TIMEOUT = System.getSystemPropertyAsLong("books.app.queryTimeout", 10000);
+		
+		// Skip books whose author is not loaded.
+		GlobalValues.SKIP_BOOK_BY_AUTHOR = System.getSystemPropertyAsBoolean("books.app.skipBookByAuthor", false);
+		
+		System.debugOut("**** startup");
+		System.debugOut("**** Using Legacy ID - " + useLegacy);
+		System.debugOut("**** SKIP_LOCKS - " + GlobalValues.SKIP_LOCKS);
+		System.debugOut("**** USE_AUTHOR_PK - " + GlobalValues.USE_AUTHOR_PK);
+		System.debugOut("**** USE_BOOK_PK - " + GlobalValues.USE_BOOK_PK);
+		System.debugOut("**** LOCK_WAIT_TIMEOUT - " + GlobalValues.LOCK_WAIT_TIMEOUT);
+		System.debugOut("**** LOCK_LOCAL - " + GlobalValues.LOCK_LOCAL);
+		System.debugOut("**** ENSURE_NOTEXISTS_BEFORE_INSERT - " + GlobalValues.ENSURE_NOTEXISTS_BEFORE_INSERT);
+		System.debugOut("**** RUN_UNIT_TESTS_ON_START - " + GlobalValues.RUN_UNIT_TESTS_ON_START);
+		System.debugOut("**** SKIP_DATA_RECORDS - " + GlobalValues.SKIP_DATA_RECORDS);
+		System.debugOut("**** CONCEPT_UPDATE_BATCH - " + GlobalValues.CONCEPT_UPDATE_BATCH);
+		System.debugOut("**** FILE_LOAD_BATCH - " + GlobalValues.FILE_LOAD_BATCH);
+		System.debugOut("**** CONCEPT_UPDATE_BATCH - " + GlobalValues.CONCEPT_UPDATE_BATCH);
+		System.debugOut("**** STORE_OM - " + GlobalValues.STORE_OM);
+		System.debugOut("**** QUERY_TIMEOUT - " + GlobalValues.QUERY_TIMEOUT);
+		System.debugOut("**** SKIP_BOOK_BY_AUTHOR - " + GlobalValues.SKIP_BOOK_BY_AUTHOR);
+		
+		Stats.initStats();
+		
+		if (GlobalValues.STORE_OM) {
+			// connect to AS4 store for bulk delete
+			Query.asStoreConnect();
+		}
+		
+		if (GlobalValues.SKIP_BOOK_BY_AUTHOR) {
+			// create global set to cache in-memory author id
+			RuleFunctions.Load.getAuthorSet();
+		}
+		
+		if (GlobalValues.RUN_UNIT_TESTS_ON_START) {
+			// schedule unit tests at engine startup
+			Test.scheduleTests();
+		}
+	}
+}

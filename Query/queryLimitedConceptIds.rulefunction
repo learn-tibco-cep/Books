@@ -1,0 +1,53 @@
+/**
+ * @description query and return extId of concepts of specified limit and offset
+ */
+String[] rulefunction Query.queryLimitedConceptIds {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri;   // e.g., /Concepts/Author
+		long limit;
+		long offset;
+	}
+	body {
+		Object logger = Log.getLogger("Query.queryLimitedConceptIds");
+
+		// BQL is inefficient and uses too much memory
+//		String sql = String.format("select {limit: first %d offset %d} x@extId from %s as x where x.revision > 0", limit, offset, entityUri);
+
+		Object list = null;
+		if (!GlobalValues.STORE_OM) {
+			// use native query on cache
+			String sql = String.format("native-query: select _extId from be_gen_concepts_%s where revision > 0 limit %d", 
+				String.toLowerCase(String.substringAfter(entityUri, "/Concepts/")), limit+offset);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT);
+		} else {
+			// query statement for AS data grid
+			String sql = String.format("select extid from d_%s where revision > 0 limit %d", 
+				String.toLowerCase(String.substringAfter(entityUri, "/Concepts/")), limit+offset);
+			Log.log(logger, "info", "Execute query %s", sql);
+			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+			Object arrayList = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+			
+			// take the vale of the first column from the result
+			list = Collections.List.createArrayList();
+			long c = 0;
+			Object iter = Collections.iterator(arrayList);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object[] cols = Collections.Iterator.next(iter);
+				Collections.add(list, cols[0]);
+				c++;
+			}
+			Log.log(logger, "info", "Query returned %d records", c);
+		}
+
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			Log.log(logger, "info", "No concept found after offset %d for %s", offset, entityUri);
+			return null;
+		}
+		return Query.listToBatchJSON(list);
+	}
+}

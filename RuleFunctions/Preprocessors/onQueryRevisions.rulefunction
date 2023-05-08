@@ -1,0 +1,52 @@
+/**
+ * @description This test query concepts by object id using BQL.  It proves that BQL does not use index, which is bad.
+ */
+void rulefunction RuleFunctions.Preprocessors.onQueryRevisions {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.QueryRevisions evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onQueryRevisions");
+		
+		Object keyMap = Collections.Map.createHashMap();
+		String conceptUri = null;
+		if (String.startsWith(evt.oid, "/authors")) {
+			conceptUri = "/Concepts/Author";
+			Collections.Map.put(keyMap, "author_id", evt.oid);
+		} else if (String.startsWith(evt.oid, "/books")) {
+			conceptUri = "/Concepts/Book";
+			Collections.Map.put(keyMap, "book_id", evt.oid);
+		} else if (String.startsWith(evt.oid, "/works")) {
+			conceptUri = "/Concepts/Work";
+			Collections.Map.put(keyMap, "work_id", evt.oid);
+		}
+		
+		String result = null;
+		if (conceptUri != null) {
+			long startTime = System.currentTimeMillis();
+			Concept[] cs = Query.queryConcepts(conceptUri, keyMap);
+			if (cs != null) {
+				Object buff = String.createBuffer(128);
+				String.append(buff, "[");
+				for (int i = 0; i < cs@length; i++) {
+					if (i > 0) {
+						String.append(buff, ", ");
+					}
+					String.append(buff, String.format("\"%s\"", cs[i]@extId));
+				}
+				String.append(buff, "]");
+				result = String.convertBufferToString(buff);
+				Log.log(logger, "info", "Query for %s returned %d records, elapsed %d ms", evt.oid, cs@length, (System.currentTimeMillis()-startTime));
+			} else {
+				Log.log(logger, "info", "Query for %s returned no record, elapsed %d ms", evt.oid, (System.currentTimeMillis()-startTime));
+			}
+		} else {
+			Log.log(logger, "info", "%s is not a supported object id", evt.oid);
+		}
+		Event.replyEvent(evt, Events.QueryRevisions.QueryRevisions(null, result, evt.oid));
+		Event.consumeEvent(evt);
+	}
+}

@@ -1,0 +1,23 @@
+/**
+ * @description start up for query agent: start continuous count of concepts
+ */
+void rulefunction Query.startContinuousQuery {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Object logger = Log.getLogger("Query.startContinuousQuery");
+		if (System.getSystemPropertyAsBoolean("books.app.bql.continuous.count", false)) {
+			Log.log(logger, "info", "Query agent starts continous queries");
+			Query.continuousCount("Author");
+			Query.continuousCount("Book");
+			Query.continuousCount("Work");
+		} else {
+			Log.log(logger, "info", "Query agent started without continuous query");
+			return;
+		}
+	}
+}

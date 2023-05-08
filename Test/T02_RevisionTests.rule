@@ -1,0 +1,46 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T02_RevisionTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "revision";
+	}
+	then {
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/authors/OL884910A", 10, -1, -3));
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/works/OL9896634W", 6, -1, -3));
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/books/OL45532136M", 1, -1, -3));
+		
+		// create revisions directly here in timer rule
+		// TODO: this proves that it works to create concept explicitly using Instance.newInstance(),
+		//       but the createRevisions() does not work in this timer rule, i.e., revisions -2/-3 are not saved to cache.
+//		Concepts.Author author;
+//		String extId = String.format("%s/%d", "/authors/OL23919A", 89);
+//		if (GlobalValues.LOCK_LOCAL) {
+//			author = Instance.getByExtIdByUri(extId, "/Concepts/Author");
+//		} else {
+//			author = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, "/Concepts/Author");
+//		}
+//		if (author != null) {
+//			String ext_1 = String.format("%s/%d", "/authors/OL23919A", -1);
+//			Concepts.Author a_1 = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(ext_1, true, "/Concepts/Author");
+//			if (a_1 == null) {
+//				System.debugOut("**** Author " + ext_1 + " does not exist");
+//				a_1 = Instance.newInstance("/Concepts/Author", ext_1);
+//				a_1.name = "J. K. Rowling";
+//				a_1.author_id = "/authors/OL23919A";
+//				a_1.revision = -1;
+//				a_1.latest_revision = 89;
+//				a_1.last_modified = DateTime.now();
+//			}
+//			RuleFunctions.createRevisions(author, -1, -3);
+//		}
+	}
+}

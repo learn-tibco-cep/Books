@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel:Channel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:channel="http:///com/tibco/cep/designtime/core/model/service/channel" xmlns:designtime="http:///com/tibco/cep/designtime/core/model/designtime_ontology.ecore" folder="/Channels/" name="HTTP" description="" GUID="12DFD907-0A1B-3706-F2C5-36593714512B" ownerProjectName="Books">
+  <driver xsi:type="channel:HttpChannelDriverConfig" configMethod="REFERENCE" reference="/SharedResources/HTTP.sharedhttp" label="HTTP" channel="/">
+    <destinations folder="/Channels/HTTPChannel/" name="createConcept" description="" GUID="C9B749CC-680E-E21A-603A-D78851FC4AF3" ownerProjectName="Books" eventURI="/Events/CreateConcept" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTPChannel/" name="showAuthor" description="" GUID="7B11D6F5-9CB5-769F-B417-96F553036DCC" ownerProjectName="Books" eventURI="/Events/ShowAuthor" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTPChannel/" name="showBook" description="" GUID="450C55FE-EF33-9F19-A836-689F9F9D0796" ownerProjectName="Books" eventURI="/Events/ShowBook" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTPChannel/" name="deleteConcept" description="" GUID="0625E78A-BB6E-FD0B-A212-D6FD1E2AF6AE" ownerProjectName="Books" eventURI="/Events/DeleteConcept" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTPChannel/" name="updateConcept" description="" GUID="688808E0-1283-F776-E592-A49B1F12FFE0" ownerProjectName="Books" eventURI="/Events/UpdateConcept" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTPChannel/" name="createIndex" description="" GUID="A30C1944-3662-6BD1-E7F1-F7DE1C8D4A08" ownerProjectName="Books" eventURI="/Events/CreateIndex" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTP/" name="loadFromFile" description="" GUID="28EAE703-73AE-A83E-6AE5-28AC5D96E58E" ownerProjectName="Books" eventURI="/Events/Load/LoadFromFile" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTP/" name="deleteRevisions" description="" GUID="551F0751-CCA1-8404-BCA2-5C63C5A7F3FD" ownerProjectName="Books" eventURI="/Events/DeleteRevisions" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTP/" name="revokeConcept" description="" GUID="30693C1F-0CD9-598F-A81A-6CEEAD553DDA" ownerProjectName="Books" eventURI="/Events/RevokeConcept" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTP/" name="countConcepts" description="" GUID="EF1ADA54-48FC-572E-0FB2-E4CD5363166A" ownerProjectName="Books" eventURI="/Events/CountConcepts" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/HTTP/" name="updateByQuery" description="" GUID="7DDF5BB0-5685-FC08-8485-5847C6A3FD6D" ownerProjectName="Books" eventURI="/Events/UpdateByQuery" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations name="showWork" description="" GUID="303E828D-8BE3-7D95-A3D7-276C6A3706D1" ownerProjectName="Books" eventURI="/Events/ShowWork" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations name="queryTopRows" description="" GUID="E81B9FAA-1EC2-EF3A-DF36-4E3F0155ED3D" ownerProjectName="Books" eventURI="/Events/QueryTopRows" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <destinations name="queryRevisions" description="" GUID="0A9FC8DE-E72E-EDB2-04C4-C6660F62E305" ownerProjectName="Books" eventURI="/Events/QueryRevisions" serializerDeserializerClass="com.tibco.cep.driver.http.serializer.RESTMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.jsonPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.type" value="DEFAULT"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.contextPath" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.pageFlowFunction" value=""/>
+      </properties>
+    </destinations>
+    <extendedConfiguration>
+      <properties name="serverType" value="TOMCAT"/>
+    </extendedConfiguration>
+    <driverType xsi:type="channel:DriverTypeInfo" driverTypeName="HTTP"/>
+    <choice value="TOMCAT">
+      <extendedConfiguration>
+        <properties name="be.http.connectorType" value="NIO"/>
+        <properties name="be.http.connectorInstances" value="1"/>
+        <properties name="be.http.debug" value="false"/>
+        <properties name="be.http.debugFolder" value=""/>
+        <properties name="be.http.debugLogPattern" value="%{yyyy MMM dd HH:mm:ss.SSS 'GMT'X}t %A %I [%m] '%U' [%s] %bbytes %Dms"/>
+        <properties name="be.http.connectionTimeout" value="60000"/>
+        <properties name="be.http.acceptCount" value="-1"/>
+        <properties name="be.http.socketBufferSize" value="9000"/>
+        <properties name="be.http.maxProcessors" value="-1"/>
+        <properties name="be.http.connectionLinger" value="-1"/>
+        <properties name="be.http.enableDNSLookups" value="false"/>
+        <properties name="be.http.tcpNoDelay" value="true"/>
+        <properties name="be.http.compression" value="off"/>
+        <properties name="be.http.useBodyEncodingForURI" value="false"/>
+        <properties name="be.http.URIEncoding" value=""/>
+        <properties name="be.http.maxKeepAliveRequests" value="-1"/>
+        <properties name="be.http.maxHttpHeaderSize" value="4096"/>
+        <properties name="be.http.maxPostSize" value="2097152"/>
+        <properties name="be.http.maxSavePostSize" value="4096"/>
+        <properties name="be.http.scheme" value=""/>
+        <properties name="be.http.sessionTimeout" value="1800"/>
+        <properties name="be.http.maxSpareThreads" value="50"/>
+        <properties name="be.http.minSpareThreads" value="4"/>
+        <properties name="be.http.compressableMimeType" value="text/html,text/xml,text/plain"/>
+        <properties name="be.http.restrictedUserAgents" value=""/>
+        <properties name="be.http.docRoot" value=""/>
+        <properties name="be.http.docPage" value=""/>
+        <properties name="be.http.ssl_server_keymanageralgorithm" value=""/>
+        <properties name="be.http.ssl_server_trustmanageralgorithm" value=""/>
+        <properties name="be.http.ssl_server_enabledprotocols" value="TLSv1.1,TLSv1.2,TLSv1.3"/>
+        <properties name="be.http.ssl_server_ciphers" value="TLS_AES_128_GCM_SHA256,TLS_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_DSS_WITH_AES_128_CBC_SHA,TLS_DHE_DSS_WITH_AES_128_CBC_SHA256,TLS_DHE_DSS_WITH_AES_128_GCM_SHA256,TLS_DHE_DSS_WITH_AES_256_CBC_SHA,TLS_DHE_DSS_WITH_AES_256_CBC_SHA256,TLS_DHE_DSS_WITH_AES_256_GCM_SHA384"/>
+        <properties name="be.http.ssl_server_useServerCipherOrder" value="false"/>
+        <properties name="be.http.serverHeader" value="Apache-Coyote/1.1"/>
+        <properties name="be.http.debugLogRotatable" value="true"/>
+        <properties name="be.http.debugLogFilePattern" value=".yyyy-MM-dd"/>
+        <properties name="be.http.debugLogRenameOnRotate" value="true"/>
+        <properties name="be.http.debugLogMaxDays" value="-1"/>
+      </extendedConfiguration>
+    </choice>
+  </driver>
+</channel:Channel>

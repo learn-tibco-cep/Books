@@ -1,0 +1,22 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T03_UpdateTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "update";
+	}
+	then {
+		// send events to update one concept
+		Event.sendEvent(Events.UpdateConcept.UpdateConcept(null, null, "/books/OL45532136M", 1, null, null));
+		Event.sendEvent(Events.UpdateConcept.UpdateConcept(null, null, "/authors/OL884910A", 10, null, null));
+		Event.sendEvent(Events.UpdateConcept.UpdateConcept(null, null, "/works/OL9896634W", 6, null, null));
+	}
+}

@@ -1,0 +1,27 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T01_LoadTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "load";
+	}
+	then {
+		// test single record 
+		Test.testCreateConcept("author.txt");
+		Test.testCreateConcept("work.txt");
+		Test.testCreateConcept("book.txt");
+		
+		// load all records from file
+		Test.testLoadFromFile("ol_test_authors.txt", "authors");
+		Test.testLoadFromFile("ol_test_works.txt", "works");
+		Test.testLoadFromFile("ol_test_books.txt", "books");
+	}
+}

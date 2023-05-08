@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="AggregateResponse" description="" GUID="2C774A9D-D7F7-7B63-C5EE-B08ED05E9FE5" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/Local" destinationName="aggregateResponse">
+  <properties name="action" ownerProjectName="Books"/>
+  <properties name="entityUri" ownerProjectName="Books"/>
+  <properties name="elapsed" ownerProjectName="Books" type="long"/>
+  <expiryAction name="AggregateResponse_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="aggregateresponse" type="/Events/AggregateResponse"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

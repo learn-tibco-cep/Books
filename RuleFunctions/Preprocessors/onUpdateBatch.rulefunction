@@ -1,0 +1,77 @@
+/**
+ * @description Note: batch update does not acquire locks on individual concepts, and thus it is not thread-safe for concurrent updates.
+ *   It is OK, though, if test driver makes sure that concepts are not updated concurrently.
+ *   action update:
+ *          Fetch each concept specified by the payload, and trigger corresponding UpdateConcept rule;
+ *   action revoke:
+ *          Fetch each concept specified by the payload, and trigger corresponding RevokeConcept rule;
+ *   action revision:
+ *          Fetch each concept specified by the payload, and create specified revisions for the concept in the preprocessor context.
+ */
+void rulefunction RuleFunctions.Preprocessors.onUpdateBatch {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.UpdateBatch evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onUpdateBatch");
+		
+		String[] extIds = RuleFunctions.parseJSONStringArray(evt@payload);
+		String text = evt.text;
+		if (extIds != null) {
+			String batchId = String.format("%s-%s", evt.action, extIds[0]);
+			if (evt.action == "update" || evt.action == "revoke") {
+				Stats.addBatch(batchId, extIds@length);
+			}
+			long startTime = System.currentTimeMillis();
+			for (int i = 0; i < extIds@length; i++) {
+				// TODO: fetch individual concept. Bulk gets does not work yet, it should be improved by bulk cacheLoad if the bug is fixed.
+				String extId = extIds[i];
+				Concept con;
+				if (GlobalValues.LOCK_LOCAL) {
+					con = Instance.getByExtIdByUri(extId, evt.entityUri);
+				} else {
+					con = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, evt.entityUri);
+				}
+				if (con == null) {
+					Log.log(logger, "debug", "Failed to load concept %s", extId);
+					continue;
+				}
+				
+				int idx = String.lastIndexOfString(extId, 0, "/");
+				String oid = String.left(extId, idx);
+				long revision = Number.longValue(String.substring(extId, idx+1, String.length(extId)), 10);
+				// assert event to trigger update rules
+				if (evt.action == "update") {
+					// set edit log if not already specified
+					if (text == null || text == "") {
+						text = String.format("batch-edit-%d", System.currentTimeMillis());
+					}
+					Log.log(logger, "debug", "Assert event to update concept %s %d with note '%s'", oid, revision, text);
+					Event.assertEvent(Events.UpdateConcept.UpdateConcept(null, null, oid, revision, text, batchId));
+				} else if (evt.action == "revoke") {
+					Log.log(logger, "debug", "Assert event to revoke concept %s %d", oid, revision);
+					Event.assertEvent(Events.RevokeConcept.RevokeConcept(null, null, oid, revision, batchId));
+				} else if (evt.action == "revision") {
+					if (evt.maxRev >= 0 || evt.maxRev < evt.minRev) {
+						// set default 3 negative revisions
+						evt.maxRev = -1;
+						evt.minRev = -3;
+					}
+					Log.log(logger, "debug", "Create new revisions for concept %s revisions [%d, %d]", con@extId, evt.minRev, evt.maxRev);
+					RuleFunctions.createRevisions(con, evt.maxRev, evt.minRev);
+				} else {
+					Log.log(logger, "warn", "Batch update action %s is not supported", evt.action);
+					break;
+				}
+			}
+			Log.log(logger, "info", "Batch %s of size %d preprocessor elapsed %d ms", batchId, extIds@length, (System.currentTimeMillis() - startTime));
+		}
+		
+		// cleanup batch update event
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

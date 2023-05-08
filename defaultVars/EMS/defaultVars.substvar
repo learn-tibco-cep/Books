@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository xmlns="http://www.tibco.com/xmlns/repo/types/2002">
+    <globalVariables>
+        <globalVariable>
+            <name>server</name>
+            <value>tcp://localhost:7222</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1526643502206</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>username</name>
+            <value>admin</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1597489673951</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>password</name>
+            <value>#!wgPRihq+JqkIJd7Peq67QQ==</value>
+            <type>Password</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1525080416540</modTime>
+        </globalVariable>
+    </globalVariables>
+</repository>

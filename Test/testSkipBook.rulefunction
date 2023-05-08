@@ -1,0 +1,65 @@
+/**
+ * @description 
+ */
+void rulefunction Test.testSkipBook {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Object logger = Log.getLogger("Test.testSkipBook");
+		
+		// cache author IDs from author file
+		String proj = System.getGlobalVariableAsString("FileLoader/project_root", "");
+		String path = String.format("%s/Test/Data/%s", proj, "ol_test_authors.txt");	
+		Object fd = RuleFunctions.Load.startFileReader(path /*path String */, 0 /*skip long */);
+		if (fd == null) {
+			Log.log(logger, "warn", "Failed - cannot read file %s", path);
+			return;
+		}
+		
+		String line = File.fileReadLine(fd);
+		if (line == null) {
+			Log.log(logger, "warn", "Failed - nothing to read from file %s", path);
+			return;
+		}
+		while (line != null) {
+			Log.log(logger, "info", "Cache author input: %s", line);
+			RuleFunctions.Load.cacheAuthorId(line);
+			line = File.fileReadLine(fd);
+		}
+		File.fileClose(fd);
+		
+		// add another author
+		String aid = String.substringAfter("/authors/OL23919A", "/authors/");
+		Collections.add(RuleFunctions.Load.getAuthorSet(), aid);
+		
+		// print out collected authors
+		Object iter = Collections.iterator(RuleFunctions.Load.getAuthorSet());
+		while (Collections.Iterator.hasNext(iter)) {
+			Log.log(logger, "info", "Collected author %s", Collections.Iterator.next(iter));
+		}
+
+		// test skip records in a book file
+		path = String.format("%s/Test/Data/%s", proj, "ol_test_books.txt");	
+		fd = RuleFunctions.Load.startFileReader(path /*path String */, 0 /*skip long */);
+		if (fd == null) {
+			Log.log(logger, "warn", "Failed - cannot read file %s", path);
+			return;
+		}
+		
+		line = File.fileReadLine(fd);
+		if (line == null) {
+			Log.log(logger, "warn", "Failed - nothing to read from file %s", path);
+			return;
+		}
+		while (line != null) {
+			Log.log(logger, "info", "Check input: %s", line);
+			boolean skip = RuleFunctions.Load.skipBookByAuthor(line);
+			Log.log(logger, "info", "Skip book: %b", skip);
+			line = File.fileReadLine(fd);
+		}
+	}
+}

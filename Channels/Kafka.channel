@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel:Channel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:channel="http:///com/tibco/cep/designtime/core/model/service/channel" xmlns:designtime="http:///com/tibco/cep/designtime/core/model/designtime_ontology.ecore" folder="/Channels/" name="Kafka" description="" GUID="C1E282C1-9716-B6CD-F06C-BFECC5E8362D" ownerProjectName="Books">
+  <driver label="KAFKA" channel="/">
+    <properties>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.broker.urls" value="localhost:9092" mandatory="true"/>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.security.protocol" value="PLAINTEXT" mandatory="true"/>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.sasl.mechanism" value="PLAIN"/>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.trusted.certs.folder" value=""/>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.keystore.identity" value=""/>
+      <properties xsi:type="designtime:SimpleProperty" name="kafka.truststore.password" value=""/>
+      <properties xsi:type="designtime:SimpleProperty" name="async.server.url.property" value="kafka.broker.urls"/>
+      <properties xsi:type="designtime:SimpleProperty" name="async.channelName.property" value="topic.name"/>
+    </properties>
+    <destinations folder="/Channels/KafkaChannel/" name="createConcept" description="" GUID="33E9692E-47FF-CF5F-9797-2CA82FC0F2A1" ownerProjectName="Books" eventURI="/Events/CreateConcept" serializerDeserializerClass="com.tibco.cep.driver.kafka.serializer.KafkaMapSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="topic.name" value="create_concept" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="group.id" value="be_group"/>
+        <properties xsi:type="designtime:SimpleProperty" name="client.id" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="consumer.threads" value="5"/>
+        <properties xsi:type="designtime:SimpleProperty" name="heartbeat.interval.msec" value="3000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="session.timeout.msec" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="enable.autocommit" value="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="autocommit.interval" value="5000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender.max.wait" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="compression.type" value="none"/>
+        <properties xsi:type="designtime:SimpleProperty" name="message.key.rf" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/KafkaChannel/" name="showAuthor" description="" GUID="2D08AC6D-0513-75A7-895D-44AA4DF0AC85" ownerProjectName="Books" eventURI="/Events/ShowAuthor" serializerDeserializerClass="com.tibco.cep.driver.kafka.serializer.KafkaMapSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="topic.name" value="show_author" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="group.id" value="be_group"/>
+        <properties xsi:type="designtime:SimpleProperty" name="client.id" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="consumer.threads" value="5"/>
+        <properties xsi:type="designtime:SimpleProperty" name="heartbeat.interval.msec" value="3000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="session.timeout.msec" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="enable.autocommit" value="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="autocommit.interval" value="5000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender.max.wait" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="compression.type" value="none"/>
+        <properties xsi:type="designtime:SimpleProperty" name="message.key.rf" value=""/>
+      </properties>
+    </destinations>
+    <destinations folder="/Channels/KafkaChannel/" name="showBook" description="" GUID="50E97210-A0D1-2501-315A-12CF6626C783" ownerProjectName="Books" eventURI="/Events/ShowBook" serializerDeserializerClass="com.tibco.cep.driver.kafka.serializer.KafkaMapSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="topic.name" value="show_book" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="group.id" value="be_group"/>
+        <properties xsi:type="designtime:SimpleProperty" name="client.id" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="consumer.threads" value="5"/>
+        <properties xsi:type="designtime:SimpleProperty" name="heartbeat.interval.msec" value="3000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="session.timeout.msec" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="enable.autocommit" value="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="autocommit.interval" value="5000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="sync.sender.max.wait" value="30000"/>
+        <properties xsi:type="designtime:SimpleProperty" name="compression.type" value="none"/>
+        <properties xsi:type="designtime:SimpleProperty" name="message.key.rf" value=""/>
+      </properties>
+    </destinations>
+    <driverType xsi:type="channel:DriverTypeInfo" driverTypeName="Kafka"/>
+  </driver>
+</channel:Channel>

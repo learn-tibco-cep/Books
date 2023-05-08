@@ -1,0 +1,26 @@
+/**
+ * @description 
+ */
+long rulefunction RuleFunctions.Load.getLongFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String field;				
+	}
+	body {
+		String data = RuleFunctions.Load.getStringFromJSON(jsNode, field);
+		if (data != null && String.length(data) > 0) {
+			try {
+				long v = Number.longValue(data, 10);
+				return v;
+			} catch (Exception e) {
+				// invalid number
+			}
+		}
+		
+		// default -1 for invalid number
+		return -1;
+	}
+}

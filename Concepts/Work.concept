@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Concept xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/Concepts/" name="Work" description="" GUID="F85C8727-3463-C725-3B73-B76076470597" ownerProjectName="Books" superConceptPath="" autoStartStateMachine="true">
+  <extendedProperties/>
+  <properties name="work_id" ownerProjectName="Books"/>
+  <properties name="title" ownerProjectName="Books"/>
+  <properties name="subtitle" ownerProjectName="Books"/>
+  <properties name="authors" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/AuthorRole" array="true"/>
+  <properties name="covers" ownerProjectName="Books" type="long" array="true"/>
+  <properties name="links" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/WorkLink" array="true"/>
+  <properties name="lc_classifications" ownerProjectName="Books" array="true"/>
+  <properties name="subjects" ownerProjectName="Books" array="true"/>
+  <properties name="subject_places" ownerProjectName="Books" array="true"/>
+  <properties name="subject_people" ownerProjectName="Books" array="true"/>
+  <properties name="subject_times" ownerProjectName="Books" array="true"/>
+  <properties name="first_publish_date" ownerProjectName="Books"/>
+  <properties name="description" ownerProjectName="Books"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <properties name="latest_revision" ownerProjectName="Books" type="long"/>
+  <properties name="created" ownerProjectName="Books" type="DateTime"/>
+  <properties name="last_modified" ownerProjectName="Books" type="DateTime"/>
+  <properties name="excerpts" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/Excerpt" array="true"/>
+  <properties name="edit_logs" ownerProjectName="Books" array="true"/>
+</element:Concept>

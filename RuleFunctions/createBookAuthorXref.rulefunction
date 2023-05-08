@@ -1,0 +1,20 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.createBookAuthorXref {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String author_id;
+		String book_id;
+		long book_version;
+	}
+	body {
+		Concepts.BookAuthorXref.BookAuthorXref(
+			null /*extId String */,
+			String.substring(author_id, 9, String.length(author_id)) /*author_id String */,
+			String.substring(book_id, 7, String.length(book_id)) /*book_id String */,
+			book_version /*book_version long */);
+	}
+}

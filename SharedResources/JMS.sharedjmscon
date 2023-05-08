@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<BWSharedResource>
+    <name>JMCConn</name>
+    <resourceType>ae.shared.JMSConnectionKey</resourceType>
+    <description/>
+    <config>
+        <NamingEnvironment>
+            <UseJNDI>false</UseJNDI>
+            <ProviderURL>%%EMS/server%%</ProviderURL>
+            <NamingURL>tibjmsnaming://localhost:7222</NamingURL>
+            <NamingInitialContextFactory>com.tibco.tibjms.naming.TibjmsInitialContextFactory</NamingInitialContextFactory>
+            <TopicFactoryName>TopicConnectionFactory</TopicFactoryName>
+            <QueueFactoryName>QueueConnectionFactory</QueueFactoryName>
+            <NamingPrincipal>%%EMS/username%%</NamingPrincipal>
+            <NamingCredential>%%EMS/password%%</NamingCredential>
+        </NamingEnvironment>
+        <ConnectionAttributes>
+            <username>%%EMS/username%%</username>
+            <password>%%EMS/password%%</password>
+            <clientID/>
+            <autoGenClientID>true</autoGenClientID>
+        </ConnectionAttributes>
+        <UseXACF>false</UseXACF>
+        <useSsl>false</useSsl>
+        <UseSharedJndiConfig>false</UseSharedJndiConfig>
+        <AdmFactorySslPassword>#!CULGqXMXqwWmiVpOnqOSAw==</AdmFactorySslPassword>
+        <ssl xmlns="http://www.tibco.com/xmlns/aemeta/services/2002">
+            <cert isRef="true"/>
+            <identity isRef="true"/>
+            <trustStorePassword>#!orjfIezXfyDjF3CB5fO5xg==</trustStorePassword>
+            <trace>true</trace>
+            <debugTrace>true</debugTrace>
+            <verifyHostName>true</verifyHostName>
+            <expectedHostName/>
+            <strongCipherSuitesOnly>true</strongCipherSuitesOnly>
+        </ssl>
+        <JndiSharedConfiguration/>
+        <JNDIProperties/>
+    </config>
+</BWSharedResource>

@@ -1,0 +1,13 @@
+/**
+ * @description 
+ */
+void rulefunction Stats.initStats {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+	}
+	body {
+		Collections.Map.Concurrent.createHashMapWithId("BatchStats");
+	}
+}

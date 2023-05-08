@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="ShowAuthor" description="" GUID="8E392117-BB16-C3BA-A150-B4E6CEEDA4C9" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="showAuthor">
+  <extendedProperties/>
+  <properties name="author_id" ownerProjectName="Books" conceptTypePath="/Events/ShowAuthor"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <expiryAction folder="/Events/ShowAuthor" name="ShowAuthorEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="showauthorevent" type="/Events/ShowAuthor"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

@@ -1,0 +1,34 @@
+/**
+ * @description connect to AS4 store of it uses AS4 store OM, and realmURL is configured.
+ */
+void rulefunction Query.asStoreConnect {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		Object logger = Log.getLogger("Query.asStoreConnect");
+		
+		String storeKey = Query.asStoreKey();
+		if (!GlobalValues.STORE_OM || storeKey == null) {
+			Log.log(logger, "debug", "AS4 store OM is not specified");
+			return;
+		}
+
+		int idx = String.lastIndexOfString(storeKey, 0, "/");
+		String url = String.substring(storeKey, 0, idx);
+		String grid = String.substring(storeKey, idx+1, String.length(storeKey));
+		try {
+			Object session = CustomFunction.connectToAS(url, grid, null, null);
+			Object sessionMap = Collections.Map.getMap("storeSession");
+			if (sessionMap == null) {
+				sessionMap = Collections.Map.createHashMapWithId("storeSession");
+			}
+			Collections.Map.put(sessionMap, storeKey, session);
+		} catch (Exception e) {
+			Log.logException(logger, "warn", "Failed to connect to AS %s grid %s", e, url, grid);
+		}
+	}
+}

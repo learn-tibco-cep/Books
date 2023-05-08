@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="AggregateQuery" description="" GUID="1E97281F-CC00-4704-6244-9E20C76828EE" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/Local" destinationName="aggregateQuery">
+  <properties name="action" ownerProjectName="Books"/>
+  <properties name="entityUri" ownerProjectName="Books"/>
+  <properties name="filedName" ownerProjectName="Books"/>
+  <properties name="filter" ownerProjectName="Books"/>
+  <properties name="groupBy" ownerProjectName="Books"/>
+  <expiryAction folder="/Events/AggregateQuery" name="ExecuteQueryEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="executequeryevent" type="/Events/AggregateQuery"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

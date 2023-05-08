@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="CreateConcept" description="" GUID="C50D1A3D-C94C-22B8-3765-23E25EB92F1C" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="createConcept">
+  <extendedProperties/>
+  <properties name="oid" ownerProjectName="Books" conceptTypePath="/Events/CreateConcept"/>
+  <properties name="revision" ownerProjectName="Books" type="long" conceptTypePath="/Events/CreateConcept"/>
+  <properties name="maxNewRev" ownerProjectName="Books" type="long"/>
+  <properties name="minNewRev" ownerProjectName="Books" type="long"/>
+  <expiryAction folder="/Events/CreateConcept" name="CreateAuthorEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="createauthorevent" type="/Events/CreateConcept"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

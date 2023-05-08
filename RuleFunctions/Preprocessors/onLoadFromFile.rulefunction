@@ -1,0 +1,46 @@
+/**
+ * @description Performance test: read specified number of rows from a file after skipping a few rows. 
+ *   For each row, create a concept based on the specified dataType, i.e., books, works, or authors.
+ */
+void rulefunction RuleFunctions.Preprocessors.onLoadFromFile {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.Load.LoadFromFile evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onLoadFromFile");
+		Log.log(logger, "info", "Received request to load %d %s from file %s", evt.rows, evt.dataType, evt.path);
+		
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+		
+		Object fd = RuleFunctions.Load.startFileReader(evt.path /*path String */, evt.skip /*skip long */);
+		if (fd == null) {
+			Log.log(logger, "info", "No data to read from file %s after skipping %d lines", evt.path, evt.skip);
+			return;
+		}
+
+		long rows = 0;
+		long count = 0;
+		long startTime = System.currentTimeMillis();
+		while (evt.rows <= 0 || rows < evt.rows) {
+			long toRead = GlobalValues.FILE_LOAD_BATCH;
+			if (evt.rows > 0 && GlobalValues.FILE_LOAD_BATCH > evt.rows - rows) {
+				toRead = evt.rows - rows;
+			}
+			String lines = RuleFunctions.Load.readLines(fd, toRead);
+			if (lines == null) {
+				Log.log(logger, "info", "No more data to read from file: %s", evt.path);
+				break;
+			}
+			rows = rows + toRead;
+			Event.sendEvent(Events.Load.LoadBatch.LoadBatch(null, lines, evt.dataType));
+			count = count + 1;
+		}
+		Log.log(logger, "info", "Dispatched %d events to load %d records from file %s, elapsed %d ms", 
+			count, rows, evt.path, (System.currentTimeMillis() - startTime));
+		File.fileClose(fd);
+	}
+}

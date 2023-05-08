@@ -1,0 +1,35 @@
+/**
+ * @description 
+ */
+void rulefunction Query.bqlCallback {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String	resultName;
+		boolean	isBatchEnd;
+		boolean	hasEnded;
+		Object	row;
+		Object	closure;
+	}
+	body {
+		Object logger = Log.getLogger("Query.bqlCallback");
+		int window = System.getSystemPropertyAsInt("books.app.bql.callback.window", -1);
+		
+		if (hasEnded) {
+			if (window < 0) {
+				Log.log(logger, "info", "%s: ===============", resultName);
+			}
+		} else if (isBatchEnd) {
+			if (window < 0) {
+				Log.log(logger, "info", "%s: ---------------", resultName);
+			}
+		} else {
+			Object[] columns = row;
+			int c = columns[0];
+			if (window <= 0 || c % window == 0) {
+				Log.log(logger, "info", "%s: %s = %d", resultName, closure, c);
+			}
+		}
+	}
+}

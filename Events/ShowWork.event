@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="ShowWork" description="" GUID="B55151FB-1830-DC4A-0234-4E1939781C9D" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="showWork">
+  <properties name="work_id" ownerProjectName="Books"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <expiryAction name="ShowWork_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="showwork" type="/Events/ShowWork"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

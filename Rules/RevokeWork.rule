@@ -1,0 +1,39 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Rules.RevokeWork {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Events.RevokeConcept evt;
+		Concepts.Work work;
+	}
+	when {
+		evt.oid == work.work_id;
+		evt.revision == work.revision;
+	}
+	then {
+		Object logger = Log.getLogger("Rules.RevokeWork");
+		
+		int toRemove = work.edit_logs@length;
+		if (toRemove > 0) {
+			int diff = work.excerpts@length - work.edit_logs@length;
+			Instance.PropertyArray.clear(work.edit_logs);
+			if (diff >= 0) {
+				for (int i = 0; i < toRemove; i++) {
+					Instance.PropertyArray.removeContainedConcept(work.excerpts, work.excerpts[diff]);
+				}
+			}
+			Log.log(logger, "debug", "Revoked work %s removed %d excerpts to %d", work@extId, toRemove, work.excerpts@length);
+		}
+		
+		if (evt.batchId != null) {
+			Stats.setBatchStat(evt.batchId, System.currentTimeMillis());
+		}
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

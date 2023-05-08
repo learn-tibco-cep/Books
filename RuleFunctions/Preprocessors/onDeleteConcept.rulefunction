@@ -1,0 +1,64 @@
+/**
+ * @description delete a concept of specified id and revision.
+ */
+void rulefunction RuleFunctions.Preprocessors.onDeleteConcept {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.DeleteConcept evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onDeleteConcept");
+
+		String extId = String.format("%s/%d", evt.oid, evt.revision);
+		Log.log(logger, "debug", "Delete concept: %s", extId);
+		
+		String conUri = null;
+		
+		// verify that evt.oid starts with /authors/, or /works/, or /books/
+		int pinx = String.indexOfString(evt.oid, 1, "/");
+		if (pinx < 1) {
+			Log.log(logger, "warn", "Failed to delete concept: Invalid object ID %s", evt.oid);
+		} else {
+			// determine the type of concept to be created
+			String prefix = String.substring(evt.oid, 0, pinx+1);
+			if (prefix == "/authors") {
+				conUri = "/Concepts/Author";
+			} else if (prefix == "/works") {
+				conUri = "/Concepts/Work";
+			} else if (prefix == "/books") {
+				conUri = "/Concepts/Book";
+			}
+		}
+		
+		if (conUri == null) {
+			Log.log(logger, "warn", "Failed to delete concept: not supported type %s", evt.oid);
+		} else {
+			// lock if required
+			boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+			if (!locked) {
+				Log.log(logger, "warn", "Failed to LOCK Concept %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			} else {
+				// check existence if required
+				Concept con;
+				if (GlobalValues.LOCK_LOCAL) {
+					con = Instance.getByExtIdByUri(extId, conUri);
+				} else {
+					con = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, conUri);
+				}
+				if (con != null) {
+					Instance.deleteInstance(con);
+					Log.log(logger, "debug", "Deleted concept: %s", extId);
+				} else {
+					Log.log(logger, "debug", "Concept %s does not exist", extId);
+				}
+			}
+		}
+		
+		// send reply and cleanup request
+		Log.log(logger, "debug", "Cleanup delete event for concept - %s", extId);
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

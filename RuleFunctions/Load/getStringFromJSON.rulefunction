@@ -1,0 +1,31 @@
+/**
+ * @description 
+ */
+String rulefunction RuleFunctions.Load.getStringFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String field;
+	}
+	body {
+		if (jsNode == null) {
+			// invalid JSON node
+			return null;
+		}
+
+		if (field == null) {
+			// return text value of the node
+			return JSON.getTextValue(jsNode);
+		}
+
+		// get specified element of the node
+		Object node = JSON.getNode(jsNode, field);
+		if (node == null || !JSON.isValueNode(node)) {
+			// not a value node
+			return null;
+		}
+		return JSON.getTextValue(node);
+	}
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<repository xmlns="http://www.tibco.com/xmlns/repo/types/2002">
+    <globalVariables>
+        <globalVariable>
+            <name>username</name>
+            <value>postgres</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1680634250463</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>password</name>
+            <value>#!eSCVtysozW4CnzQnEmFSpjirDlTwJKh6Og3UNhKy09k=</value>
+            <type>Password</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1680634262841</modTime>
+        </globalVariable>
+        <globalVariable>
+            <name>dburl</name>
+            <value>jdbc:postgresql://localhost:5433/be-perf?currentSchema=public</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>true</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1680634232078</modTime>
+        </globalVariable>
+    </globalVariables>
+</repository>

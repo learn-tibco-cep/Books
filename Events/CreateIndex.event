@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="CreateIndex" description="create index for comma-delimited fields of an entity" GUID="B65955EA-CBB2-DCBD-3ECB-21DAC1692C18" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="createIndex">
+  <properties name="entityUri" ownerProjectName="Books"/>
+  <properties name="fields" ownerProjectName="Books"/>
+  <properties name="sorted" ownerProjectName="Books" type="boolean"/>
+  <expiryAction folder="/Events/CreateIndex" name="CreateIndexEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="createindexevent" type="/Events/CreateIndex"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

@@ -1,0 +1,37 @@
+/**
+ * @description 
+ */
+void rulefunction Test.testQueryConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String conceptUri;
+		String name;
+		String value;
+	}
+	body {
+		Object logger = Log.getLogger("Test.testQueryConcepts");
+		
+		Object keyMap = Collections.Map.createHashMap();
+		Collections.Map.put(keyMap, name, value);
+		Concept[] cs = Query.queryConcepts(conceptUri, keyMap);
+		
+		for (int i = 0; i < cs@length; i++) {
+			Log.log(logger, "info", "query returned concept extId %s", cs[i]@extId);
+			if (String.endsWith(conceptUri, "Author")) {
+				Concepts.Author author = cs[i];
+				Log.log(logger, "info", "query result author id: %s, revision: %d, name: %s, edit_logs: %d, last_modified: %s", 
+					author.author_id, author.revision, author.name, author.edit_logs@length, DateTime.format(author.last_modified,"yyyy-MM-dd HH:mm:ss.SSS"));
+			} else if (String.endsWith(conceptUri, "Work")) {
+				Concepts.Work work = cs[i];
+				Log.log(logger, "info", "query result work id: %s, revision: %d, title: %s, edit_logs: %d, last_modified: %s", 
+					work.work_id, work.revision, work.title, work.edit_logs@length, DateTime.format(work.last_modified,"yyyy-MM-dd HH:mm:ss.SSS"));
+			} else if (String.endsWith(conceptUri, "Book")) {
+				Concepts.Book book = cs[i];
+				Log.log(logger, "info", "query result book id: %s, revision: %d, title: %s, edit_logs: %d, last_modified: %s", 
+					book.book_id, book.revision, book.title, book.edit_logs@length, DateTime.format(book.last_modified,"yyyy-MM-dd HH:mm:ss.SSS"));
+			}		
+		}
+	}
+}

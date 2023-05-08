@@ -1,0 +1,41 @@
+/**
+ * @description create authors, works, or books from JSON string
+ */
+void rulefunction RuleFunctions.Load.createConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String js;
+		String prefix;  // authors, works, or books
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.createConcepts");
+		Log.log(logger, "debug", "Create concepts from JSON: %s", js);
+		
+		Object root;
+		try {
+			root = JSON.parseJSON(js);
+		} catch (Exception e) {
+			Log.log(logger, "warn", "Ignore invalid JSON string - %s", e@message);
+			return;
+		}
+		
+		if (JSON.isArrayNode(root)) {
+			long startTime = System.currentTimeMillis();
+			Object iter = JSON.getAllElements(root);
+			long count = 0;
+			long created = 0;
+			while (Collections.Iterator.hasNext(iter)) {
+				Object result = RuleFunctions.Load.createConceptFromJSON(Collections.Iterator.next(iter), prefix);
+				count += 1;
+				if (result != null) {
+					created += 1;
+				}
+			}
+			Log.log(logger, "info", "Created %d of %d %s, elapsed %d ms", created, count, prefix, (System.currentTimeMillis() - startTime));
+		} else {
+			RuleFunctions.Load.createConceptFromJSON(root, prefix);
+		}
+	}
+}

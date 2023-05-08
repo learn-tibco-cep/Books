@@ -1,0 +1,45 @@
+/**
+ * @description query for exact match of property values.
+ */
+Concept[] rulefunction Query.queryConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri; // e.g. /Concepts/Author
+		Object keyMap;    // e.g. author_id => xyz
+	}
+	body {
+		Object logger = Log.getLogger("Query.queryConcepts");
+		Object buff = String.createBuffer(512);
+		String.append(buff, String.format("select c from %s as c", entityUri));
+		if (keyMap != null && Collections.Map.size(keyMap) > 0) {
+			String.append(buff, " where");
+			String op = "";
+			Object iter = Collections.iterator(Collections.Map.keySet(keyMap));
+			while (Collections.Iterator.hasNext(iter)) {
+				String field = Collections.Iterator.next(iter);
+				String.append(buff, String.format("%s c.%s = $%s", op, field, field));
+				op = " and";
+			}
+		}
+		String sql = String.convertBufferToString(buff);
+		
+		// TODO: the BQL does not use cache index, so this query does a full table scan -- DO NOT USE BQL!!
+		// send query to query agent named "query-class"
+		Log.log(logger, "debug", "execute query: %s", sql);
+		Object list = Query.Util.executeInQuerySession("query-class", sql, keyMap, true, GlobalValues.QUERY_TIMEOUT);
+		
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			Log.log(logger, "debug", "No record returned from query: %s", sql);
+			return null;
+		}
+		
+		// convert result list to concept array
+		Log.log(logger, "debug", "Query returned %d: concepts", size);
+		Concept c = Instance.newTransientInstance(entityUri);
+		Concept[] result = Collections.toArray(list, Concept[]{c});
+		return result;
+	}
+}

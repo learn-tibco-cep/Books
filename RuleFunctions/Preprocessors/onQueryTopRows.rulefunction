@@ -1,0 +1,17 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onQueryTopRows {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.QueryTopRows evt;
+	}
+	body {
+		String result = Query.queryTopRows(evt.name, evt.columns, evt.limit);
+		
+		Event.replyEvent(evt, Events.QueryTopRows.QueryTopRows(null, result, evt.name, evt.columns, evt.limit));
+		Event.consumeEvent(evt);
+	}
+}

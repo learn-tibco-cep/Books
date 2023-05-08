@@ -1,0 +1,39 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Rules.UpdateWork {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Events.UpdateConcept evt;
+		Concepts.Work work;
+	}
+	when {
+		evt.oid == work.work_id;
+		evt.revision == work.revision;
+	}
+	then {
+		Object logger = Log.getLogger("Rules.UpdateWork");
+		
+		work.edit_logs[work.edit_logs@length] = evt.text;
+		work.last_modified = DateTime.now();
+		work.excerpts[work.excerpts@length] = Concepts.Excerpt.Excerpt(
+			null /*extId String */,
+			evt.text /*comment String */,
+			null /*excerpt String */,
+			"Test" /*author String */);
+		
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Updated book %s with '%s' in %d edit_logs", work@extId, evt.text, work.edit_logs@length);
+		}
+		
+		if (evt.batchId != null) {
+			Stats.setBatchStat(evt.batchId, System.currentTimeMillis());
+		}
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

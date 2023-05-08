@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/" name="DeleteConcept" description="" GUID="69984EC8-7E16-472C-2A1B-5A9960BF9E1F" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="deleteConcept">
+  <properties name="oid" ownerProjectName="Books" conceptTypePath="/Events/DeleteConcept"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <expiryAction folder="/Events/DeleteConcept" name="DeleteAuthorEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="deleteauthorevent" type="/Events/DeleteConcept"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

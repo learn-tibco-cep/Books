@@ -1,0 +1,25 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onCountConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.CountConcepts evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onCountConcepts");
+		long result = 0;
+		
+		if (String.startsWith(evt.entityUri, "/Concepts/")) {
+			result = Query.countConcepts(evt.entityUri);
+			Log.log(logger, "debug", "Counted %d records of %s", result, evt.entityUri);
+		} else {
+			Log.log(logger, "debug", "Invalid entity type %s", evt.entityUri);
+		}
+		
+		Event.replyEvent(evt, Events.CountConcepts.CountConcepts(null, null, evt.entityUri, result));
+		Event.consumeEvent(evt);
+	}
+}

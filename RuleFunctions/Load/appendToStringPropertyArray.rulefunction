@@ -1,0 +1,20 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Load.appendToStringPropertyArray {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object propArray;   // concept property of string array
+		Object stringList;  // list of strings to add
+	}
+	body {
+		if (stringList != null) {
+			Object iter = Collections.iterator(stringList);
+			while (Collections.Iterator.hasNext(iter)) {
+				Instance.PropertyArray.appendString(propArray, Collections.Iterator.next(iter), 0);
+			}
+		}
+	}
+}

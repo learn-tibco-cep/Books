@@ -1,0 +1,23 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T04_DeleteTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "delete";
+	}
+	then {
+		// bulk delete revisions of Work that do not match the latest_revision
+		Event.sendEvent(Events.DeleteRevisions.DeleteRevisions(null, null, "/Concepts/Work", null, 0, 0));
+	
+		// send event to delete 1 author version
+		Event.sendEvent(Events.DeleteConcept.DeleteConcept(null, null, "/authors/OL884910A", -1));
+	}
+}

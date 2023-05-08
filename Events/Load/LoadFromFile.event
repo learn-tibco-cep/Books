@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<event:SimpleEvent xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:event="http:///com/tibco/cep/designtime/core/model/event" folder="/Events/Load/" name="LoadFromFile" description="" GUID="1543697F-DB70-EA19-E429-986A25F3E8DF" ownerProjectName="Books" superEventPath="" ttlUnits="Seconds" channelURI="/Channels/HTTP" destinationName="loadFromFile">
+  <properties name="path" ownerProjectName="Books"/>
+  <properties name="skip" ownerProjectName="Books" type="long"/>
+  <properties name="rows" ownerProjectName="Books" type="long"/>
+  <properties name="dataType" ownerProjectName="Books"/>
+  <expiryAction folder="/Events/Load/LoadFromFile" name="LoadFromFile_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
+    <symbols>
+      <symbolList idName="loadfromfile" type="/Events/Load/LoadFromFile"/>
+    </symbols>
+  </expiryAction>
+</event:SimpleEvent>

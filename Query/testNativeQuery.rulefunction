@@ -1,0 +1,38 @@
+/**
+ * @description
+ */
+void rulefunction Query.testNativeQuery {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+	}
+	body {
+		Object logger = Log.getLogger("Query.testNativeQuery");
+
+		DateTime tm = DateTime.parseString("2023-02-01", "yyyy-MM-dd");
+		String sql = "native-query: select c._extId from be_gen_concepts_book c where c.book_id like '/books/OL1%'";
+//		String sql = "native-query: select c._extId from be_gen_concepts_book c where c.revision > 5";
+
+		// TODO: possible issue for usability
+		// DateTime is stored in Ignite as serialized Java object, and thus cannot be queried via JDBC.
+		// If required to query by dateTime field, you can store it in long or String, or use store function to query backing store directly.
+//		String sql = "native-query: select c._extId from be_gen_concepts_book c where c.last_modified > '2023-02-01 00:00:00'";
+
+		Log.log(logger, "info", "Execute query %s", sql);
+//		Object params = Collections.Map.createHashMap();
+//		Collections.Map.put(params, "dt", tm);
+		Object list = Query.Util.executeInQuerySession("query-class", sql, null, true, GlobalValues.QUERY_TIMEOUT);
+		
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			Log.log(logger, "info", "No concept found");
+			return;
+		}
+
+		String[] result =  Query.listToBatchJSON(list);
+		for (int i = 0; i < result@length; i++) {
+			Log.log(logger, "info", "Query result: %s", result[i]);
+		}
+	}
+}

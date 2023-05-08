@@ -1,0 +1,34 @@
+/**
+ * @description 
+ * @author rjadhav-w540
+ */
+rule Rules.UpdateAuthor {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Events.UpdateConcept evt;
+		Concepts.Author author;
+	}
+	when {
+		evt.oid == author.author_id;
+		evt.revision == author.revision;
+	}
+	then {
+		Object logger = Log.getLogger("Rules.UpdateAuthor");
+		
+		author.edit_logs[author.edit_logs@length] = evt.text;
+		author.last_modified = DateTime.now();
+		
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Updated author %s with '%s' in %d edit_logs", author@extId, evt.text, author.edit_logs@length);
+		}
+		
+		if (evt.batchId != null) {
+			Stats.setBatchStat(evt.batchId, System.currentTimeMillis());
+		}
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

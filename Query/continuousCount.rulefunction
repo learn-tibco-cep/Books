@@ -1,0 +1,28 @@
+/**
+ * @description 
+ */
+void rulefunction Query.continuousCount {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String countType; // Author, Work, or Book
+	}
+	body {
+		Object logger = Log.getLogger("Query.continuousCount");
+		Log.log(logger, "info", "Start Continuous counting of %s", countType);
+		// emit: new -> trigger only when Event enter the time window	
+		//String queryText = "select count(evt) from /Events/evInput {policy: maintain last 10 seconds using evt.evCreationTime;emit: new} evt group by 1";
+		//String queryText = "select count(evt) from /Events/evInput {policy: maintain last 10 seconds} evt group by 1";
+		String queryText = String.format("select count(x) from /Concepts/%s as x group by 1", countType);
+		String queryName = "Count" + countType;
+		Query.create(queryName, queryText);
+		
+		String statementName = queryName + "-S";
+		Query.Statement.open(queryName, statementName);
+		// Query.Statement.setSnapshotRequired(statementName, "x", true);
+		Query.Statement.executeWithCallback(statementName, queryName + "-C", "/Query/bqlCallback", true, queryName);
+	
+		Log.log(logger, "info", "Created Continuous Query: %s", queryText);
+	}
+}

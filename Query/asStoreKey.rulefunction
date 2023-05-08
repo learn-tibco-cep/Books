@@ -1,0 +1,22 @@
+/**
+ * @description 
+ */
+String rulefunction Query.asStoreKey {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		
+	}
+	body {
+		String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+		String grid = System.getGlobalVariableAsString("ASDG/grid", "");
+		if (url == "") {
+			return null;
+		}
+		if (grid == "") {
+			grid = "_default";
+		}
+		return String.format("%s/%s", url, grid);
+	}
+}

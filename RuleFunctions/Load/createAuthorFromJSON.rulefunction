@@ -1,0 +1,94 @@
+/**
+ * @description 
+ */
+Concepts.Author rulefunction RuleFunctions.Load.createAuthorFromJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object jsNode;
+		String ext;		
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.createAuthorFromJSON");
+		Log.log(logger, "debug", "Create Author from JSON for key %s", ext);
+		
+		String oid = RuleFunctions.Load.getStringFromJSON(jsNode, "key");
+		long revision = RuleFunctions.Load.getLongFromJSON(jsNode, "revision");
+		if (ext != String.format("%s/%d", oid, revision)) {
+			Log.log(logger, "warn", "JSON object does not match specified author: %s", ext);
+			return null;
+		}
+		
+		Concepts.Author author = Instance.newInstance("/Concepts/Author", ext);
+		
+		// string fields
+		author.author_id = oid;
+		author.name = RuleFunctions.Load.getStringFromJSON(jsNode, "name");
+		author.location = RuleFunctions.Load.getStringFromJSON(jsNode, "location");
+		author.bio = RuleFunctions.Load.getStringFromJSON(JSON.getNode(jsNode, "bio"), "value");
+		author.birth_date = RuleFunctions.Load.getStringFromJSON(jsNode, "birth_date");
+		author.death_date = RuleFunctions.Load.getStringFromJSON(jsNode, "death_date");
+		author.active_date = RuleFunctions.Load.getStringFromJSON(jsNode, "date");
+		author.entity_type = RuleFunctions.Load.getStringFromJSON(jsNode, "entity_type");
+		author.fuller_name = RuleFunctions.Load.getStringFromJSON(jsNode, "fuller_name");
+		author.personal_name = RuleFunctions.Load.getStringFromJSON(jsNode, "personal_name");
+		author.title = RuleFunctions.Load.getStringFromJSON(jsNode, "title");
+		author.website = RuleFunctions.Load.getStringFromJSON(jsNode, "website");
+		author.wikipedia = RuleFunctions.Load.getStringFromJSON(jsNode, "wikipedia");
+		author.photograph = RuleFunctions.Load.getStringFromJSON(jsNode, "photograph");
+		
+		// datetime fields
+		author.last_modified = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "last_modified");
+		author.created = RuleFunctions.Load.getDateTimeFromJSON(jsNode, "created");
+
+		// numeric fields
+		author.revision = revision;
+
+		long latest_revision = RuleFunctions.Load.getLongFromJSON(jsNode, "latest_revision");
+		if (latest_revision != -1) {
+			author.latest_revision = latest_revision;
+		}
+
+		// array fields
+		Object alternate_names = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "alternate_names"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(author.alternate_names, alternate_names);
+
+		Object photos = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "photos"), null);
+		RuleFunctions.Load.appendToLongPropertyArray(author.photos, photos);
+
+		Object source_records = RuleFunctions.Load.getStringListFromJSON(JSON.getNode(jsNode, "source_records"), null);
+		RuleFunctions.Load.appendToStringPropertyArray(author.source_records, source_records);
+		
+		// contained concepts
+		Object linkNode = JSON.getNode(jsNode, "links");
+		if (linkNode != null && JSON.isArrayNode(linkNode)) {
+			// create work links
+			Object iter = JSON.getAllElements(linkNode);
+			while (Collections.Iterator.hasNext(iter)) {
+				Object item = Collections.Iterator.next(iter);
+				String linkUrl = RuleFunctions.Load.getStringFromJSON(item, "url");
+				if (linkUrl == null || String.length(linkUrl) == 0) {
+					// ignore the item if no url
+					continue;
+				}
+				String title = RuleFunctions.Load.getStringFromJSON(item, "title");
+				author.links[author.links@length] = Concepts.AuthorLink.AuthorLink(null, linkUrl, title);
+			}
+		}
+		
+		Object idsNode = JSON.getNode(jsNode, "remote_ids");
+		if (idsNode != null && JSON.isObjectNode(idsNode)) {
+			// create remote ids
+			String viaf = RuleFunctions.Load.getStringFromJSON(idsNode, "viaf");
+			String wikidata = RuleFunctions.Load.getStringFromJSON(idsNode, "wikidata");
+			String isni = RuleFunctions.Load.getStringFromJSON(idsNode, "isni");
+			author.remote_ids = Concepts.AuthorRemoteId.AuthorRemoteId(null, wikidata, viaf, isni);
+		}
+		
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Loaded Author from JSON: %s", Instance.serializeToJSON(author, true, "author"));
+		}
+		return author;
+	}
+}

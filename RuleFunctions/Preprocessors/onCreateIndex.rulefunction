@@ -1,0 +1,44 @@
+/**
+ * @description create index for 1 or more fields of an entity table in cache/store OM. "_extId" is field for @extId.
+ *   Note: use cdd to define multi-column indexes.
+ */
+void rulefunction RuleFunctions.Preprocessors.onCreateIndex {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.CreateIndex evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onCreateIndex");
+		
+		long startTime = System.currentTimeMillis();
+		if (GlobalValues.LOCK_LOCAL) {
+			// BE does not support indexing for in-memory OM
+			Log.log(logger, "info", "Memory-only OM does not support index for entity %s", evt.entityUri);
+		} else {
+			String name = Cluster.DataGrid.CacheName(evt.entityUri);
+			if (name == null || name == "") {
+				Log.log(logger, "warn", "Cannot find cache name for entity %s", evt.entityUri);
+			} else {
+				String[] fields = String.split(evt.fields, ",");
+				if (fields@length < 1) {
+					Log.log(logger, "warn", "Index fields are not specified for entity %s", evt.entityUri);
+				} else {
+					if (fields@length > 1) {
+						Log.log(logger, "warn", "Multi-field indexing does not work yet, so only the first field %s is indexed", fields[0]);
+					}
+					// TODO: multi-field index cannot be created using this call. need to update after fix
+					// Cluster.DataGrid.Index(name, fields, evt.sorted);
+					Cluster.DataGrid.Index(name, fields[0], evt.sorted);
+					Log.log(logger, "info", "Created index on %s of %s sorted %b, elapsed %d ms", fields[0], evt.entityUri, evt.sorted, (System.currentTimeMillis()-startTime));
+				}
+			}
+		}
+		
+		// send reply and cleanup request
+		Log.log(logger, "debug", "Cleanup indexing event for enitity - %s", evt.entityUri);
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}

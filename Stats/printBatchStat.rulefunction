@@ -1,0 +1,17 @@
+/**
+ * @description 
+ */
+void rulefunction Stats.printBatchStat {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String batchId;
+		long[] stat;  // [count, size, start, minEnd, maxEnd]
+	}
+	body {
+		Object logger = Log.getLogger("Stats.printBatchStat");
+		Log.log(logger, "info", "Completed batch %s: count %d, elapsed [%d, %d] ms",
+			batchId, stat[0], (stat[3] - stat[2]), (stat[4] - stat[2]));
+	}
+}

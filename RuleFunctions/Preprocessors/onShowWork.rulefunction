@@ -1,0 +1,48 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Preprocessors.onShowWork {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Events.ShowWork evt;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onShowWork");
+		String extId = String.format("%s/%d", evt.work_id, evt.revision);
+		Log.log(logger, "debug", "Show work: %s", extId);
+		
+		long startTime = System.currentTimeMillis();
+		Object buff = String.createBuffer(256);
+		String.append(buff, String.format("{\"work_id\": \"%s\", \"revision\": %d", evt.work_id, evt.revision));
+		
+		boolean locked = GlobalValues.SKIP_LOCKS || Cluster.DataGrid.Lock(extId, GlobalValues.LOCK_WAIT_TIMEOUT, GlobalValues.LOCK_LOCAL);
+		if (!locked) {
+			Log.log(logger, "warn", "Failed to LOCK Work %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
+			String.append(buff, ", \"error\": \"Lock timeout\"");
+		} else {
+			Concepts.Work work;
+			if (GlobalValues.LOCK_LOCAL) {
+				work = Instance.getByExtIdByUri(extId, "/Concepts/Work");
+			} else {
+				work = Cluster.DataGrid.CacheLoadConceptByExtIdByUri(extId, true, "/Concepts/Work");
+			}
+			if (work == null) {
+				Log.log(logger, "debug", "Work not found: %s", extId);
+				String.append(buff, ", \"error\": \"Not found\"");
+			} else {
+				Log.log(logger, "debug", "Loaded work from cache: %s %d - titile: %s, first published on %s", work.work_id, work.revision, work.title, work.first_publish_date);
+				String.append(buff, String.format(", \"title\": \"%s\", \"first_publish_date\": \"%s\", \"excerpts\": %d, \"edit_logs\": %d", work.title, work.first_publish_date, work.excerpts@length, work.edit_logs@length));
+			}
+		}
+		long elapsed = System.currentTimeMillis()-startTime;
+		String.append(buff, String.format(", \"elapsed\": %d}", elapsed));
+		
+		// send reply and cleanup show book event
+		Log.log(logger, "debug", "Cleanup show work event for concept - %s", extId);
+		Event.replyEvent(evt, Events.ShowWork.ShowWork(null, String.convertBufferToString(buff), evt.work_id, evt.revision));
+		Event.consumeEvent(evt);
+		Log.log(logger, "info", "Show Work %s, elapsed %d ms", extId, elapsed);
+	}
+}

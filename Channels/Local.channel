@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channel:Channel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:channel="http:///com/tibco/cep/designtime/core/model/service/channel" xmlns:designtime="http:///com/tibco/cep/designtime/core/model/designtime_ontology.ecore" folder="/Channels/" name="Local" description="" GUID="413B41DC-3D18-11E0-E854-C79E9A07C424" ownerProjectName="Books">
+  <driver configMethod="REFERENCE" label="LOCAL" channel="/">
+    <destinations name="aggregateQuery" description="" GUID="47234CD6-5367-E90C-4802-CC28BF2AEBAF" ownerProjectName="Books" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Size" value="0"/>
+        <properties xsi:type="designtime:SimpleProperty" name="TimeOut" value="-1"/>
+      </properties>
+    </destinations>
+    <destinations name="batchLoad" description="" GUID="7B62C127-9F85-7A6C-34EA-C478367A51F1" ownerProjectName="Books" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Size" value="0"/>
+        <properties xsi:type="designtime:SimpleProperty" name="TimeOut" value="-1"/>
+      </properties>
+    </destinations>
+    <destinations name="aggregateResponse" description="" GUID="EB028937-6F32-E9F1-B8BD-B59DCE268223" ownerProjectName="Books" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Size" value="0"/>
+        <properties xsi:type="designtime:SimpleProperty" name="TimeOut" value="-1"/>
+      </properties>
+    </destinations>
+    <destinations name="batchUpdate" description="" GUID="C6FE4CFC-BA95-F838-4DDE-7E24398B6908" ownerProjectName="Books" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="Size" value="0"/>
+        <properties xsi:type="designtime:SimpleProperty" name="TimeOut" value="-1"/>
+      </properties>
+    </destinations>
+    <driverType xsi:type="channel:DriverTypeInfo" driverTypeName="Local"/>
+  </driver>
+</channel:Channel>

@@ -1,0 +1,42 @@
+/**
+ * @description 
+ */
+String[] rulefunction RuleFunctions.parseJSONStringArray {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String js;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.parseJSONStringArray");
+		
+		if (js == null || !String.startsWith(js, "[")) {
+			Log.log(logger, "debug", "Ignore invalid string - %s", js);
+			return null;
+		}
+		
+		Object root;
+		try {
+			root = JSON.parseJSON(js);
+		} catch (Exception e) {
+			Log.log(logger, "warn", "Ignore invalid JSON string - %s", e@message);
+			return null;
+		}
+		
+		if (!JSON.isArrayNode(root)) {
+			Log.log(logger, "debug", "JSON string is not an array: %s", js);
+			return null;
+		}
+		
+		Object list = Collections.List.createArrayList();
+		Object iter = JSON.getAllElements(root);
+		while (Collections.Iterator.hasNext(iter)) {
+			String value = JSON.getTextValue(Collections.Iterator.next(iter));
+			if (value != null) {
+				Collections.add(list, value);
+			}
+		}
+		return Collections.toArray(list, String[]{""});
+	}
+}

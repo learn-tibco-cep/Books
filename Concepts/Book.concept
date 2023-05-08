@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Concept xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/Concepts/" name="Book" GUID="0B3372D6-D930-A251-4849-849996D2807F" ownerProjectName="Books" superConceptPath="" autoStartStateMachine="true">
+  <extendedProperties/>
+  <properties name="book_id" ownerProjectName="Books"/>
+  <properties name="title" ownerProjectName="Books"/>
+  <properties name="publishers" ownerProjectName="Books" array="true"/>
+  <properties name="authors" ownerProjectName="Books" array="true"/>
+  <properties name="table_of_contents" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/TableOfContent" array="true"/>
+  <properties name="links" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/BookLink" array="true"/>
+  <properties name="first_sentence" ownerProjectName="Books"/>
+  <properties name="works" ownerProjectName="Books" array="true"/>
+  <properties name="identifiers" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/BookIdentifier" array="true"/>
+  <properties name="isbn_10" ownerProjectName="Books" array="true"/>
+  <properties name="isbn_13" ownerProjectName="Books" array="true"/>
+  <properties name="lccn" ownerProjectName="Books" array="true"/>
+  <properties name="ocaid" ownerProjectName="Books"/>
+  <properties name="oclc_numbers" ownerProjectName="Books" array="true"/>
+  <properties name="local_id" ownerProjectName="Books" array="true"/>
+  <properties name="covers" ownerProjectName="Books" type="long" array="true"/>
+  <properties name="languages" ownerProjectName="Books" array="true"/>
+  <properties name="translated_from" ownerProjectName="Books" array="true"/>
+  <properties name="translation_of" ownerProjectName="Books"/>
+  <properties name="by_statement" ownerProjectName="Books"/>
+  <properties name="weight" ownerProjectName="Books"/>
+  <properties name="edition_name" ownerProjectName="Books"/>
+  <properties name="number_of_pages" ownerProjectName="Books" type="long"/>
+  <properties name="pagination" ownerProjectName="Books"/>
+  <properties name="physical_dimensions" ownerProjectName="Books"/>
+  <properties name="physical_format" ownerProjectName="Books"/>
+  <properties name="copyright_date" ownerProjectName="Books"/>
+  <properties name="publish_country" ownerProjectName="Books"/>
+  <properties name="publish_date" ownerProjectName="Books"/>
+  <properties name="subject_place" ownerProjectName="Books" array="true"/>
+  <properties name="contributions" ownerProjectName="Books" array="true"/>
+  <properties name="dewey_decimal_class" ownerProjectName="Books" array="true"/>
+  <properties name="genres" ownerProjectName="Books" array="true"/>
+  <properties name="lc_classifications" ownerProjectName="Books" array="true"/>
+  <properties name="other_titles" ownerProjectName="Books" array="true"/>
+  <properties name="series" ownerProjectName="Books" array="true"/>
+  <properties name="source_records" ownerProjectName="Books" array="true"/>
+  <properties name="subjects" ownerProjectName="Books" array="true"/>
+  <properties name="work_title" ownerProjectName="Books" array="true"/>
+  <properties name="description" ownerProjectName="Books"/>
+  <properties name="notes" ownerProjectName="Books"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <properties name="latest_revision" ownerProjectName="Books" type="long"/>
+  <properties name="last_modified" ownerProjectName="Books" type="DateTime"/>
+  <properties name="created" ownerProjectName="Books" type="DateTime"/>
+  <properties name="subtitle" ownerProjectName="Books"/>
+  <properties name="url" ownerProjectName="Books" array="true"/>
+  <properties name="uris" ownerProjectName="Books" array="true"/>
+  <properties name="uri_descriptions" ownerProjectName="Books" array="true"/>
+  <properties name="publish_places" ownerProjectName="Books" array="true"/>
+  <properties name="subject_time" ownerProjectName="Books" array="true"/>
+  <properties name="edit_logs" ownerProjectName="Books" array="true"/>
+</element:Concept>

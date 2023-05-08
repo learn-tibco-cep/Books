@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<element:Concept xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:designtime="http:///com/tibco/cep/designtime/core/model/designtime_ontology.ecore" xmlns:element="http:///com/tibco/cep/designtime/core/model/element" folder="/Concepts/" name="Author" description="" GUID="E7F3659B-F427-F890-79EF-FF8AF39B15D0" ownerProjectName="Books" superConceptPath="" autoStartStateMachine="true">
+  <extendedProperties>
+    <properties xsi:type="designtime:SimpleProperty" name="PRIMARY_KEY_PROPS" value="author_id"/>
+  </extendedProperties>
+  <properties name="author_id" ownerProjectName="Books"/>
+  <properties name="name" ownerProjectName="Books"/>
+  <properties name="revision" ownerProjectName="Books" type="long"/>
+  <properties name="location" ownerProjectName="Books"/>
+  <properties name="alternate_names" ownerProjectName="Books" array="true"/>
+  <properties name="bio" ownerProjectName="Books"/>
+  <properties name="birth_date" ownerProjectName="Books"/>
+  <properties name="death_date" ownerProjectName="Books"/>
+  <properties name="active_date" ownerProjectName="Books"/>
+  <properties name="entity_type" ownerProjectName="Books"/>
+  <properties name="fuller_name" ownerProjectName="Books"/>
+  <properties name="personal_name" ownerProjectName="Books"/>
+  <properties name="title" ownerProjectName="Books"/>
+  <properties name="links" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/AuthorLink" array="true"/>
+  <properties name="remote_ids" ownerProjectName="Books" type="ContainedConcept" conceptTypePath="/Concepts/AuthorRemoteId"/>
+  <properties name="latest_revision" ownerProjectName="Books" type="long"/>
+  <properties name="created" ownerProjectName="Books" type="DateTime"/>
+  <properties name="last_modified" ownerProjectName="Books" type="DateTime"/>
+  <properties name="photos" ownerProjectName="Books" type="long" array="true"/>
+  <properties name="source_records" ownerProjectName="Books" array="true"/>
+  <properties name="website" ownerProjectName="Books"/>
+  <properties name="wikipedia" ownerProjectName="Books"/>
+  <properties name="photograph" ownerProjectName="Books"/>
+  <properties name="edit_logs" ownerProjectName="Books" array="true"/>
+</element:Concept>

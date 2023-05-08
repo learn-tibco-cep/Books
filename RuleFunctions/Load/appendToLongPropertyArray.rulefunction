@@ -1,0 +1,25 @@
+/**
+ * @description 
+ */
+void rulefunction RuleFunctions.Load.appendToLongPropertyArray {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object propArray;   // concept property of string array
+		Object stringList;  // list of string to add		
+	}
+	body {
+		if (stringList != null) {
+			Object iter = Collections.iterator(stringList);
+			while (Collections.Iterator.hasNext(iter)) {
+				try {
+					long v = Number.longValue(Collections.Iterator.next(iter), 10);
+					Instance.PropertyArray.appendLong(propArray, v, 0);
+				} catch (Exception e) {
+					// ignore invalid number
+				}
+			}
+		}		
+	}
+}

@@ -1,0 +1,55 @@
+/**
+ * @description 
+ * @author Pro-Branes.local
+ */
+rule Test.T05_QueryTests {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Test.TestScheduler tm;
+	}
+	when {
+		tm@closure == "query";
+	}
+	then {
+		Object logger = Log.getLogger("Test.T05_QueryTests");
+		
+		// execute query using query agent via Query.Util.executeInQuerySession		
+		Test.testQueryConcepts("/Concepts/Author", "name", "Frederic Manning");
+		Test.testQueryConcepts("/Concepts/Work", "title", "Berkshire Encyclopedia of Sustainabilitiy Vol. 2");
+		Test.testQueryConcepts("/Concepts/Book", "title", "European Court of Auditors");
+		Test.testQueryConcepts("/Concepts/Author", "name", "J. K. Rowling");
+		
+		// send aggregate query event to query agent
+		Events.AggregateQuery req = Events.AggregateQuery.AggregateQuery(
+			null /*extId String */,
+			null /*payload String */,
+			"groupCount" /*action String */,
+			"/Concepts/Author" /*entityUri String */,
+			null /*filedName String */,
+			null /*filter String */,
+			"name" /*groupBy String */);
+		// Note: cannot use requestEvent on local channel, so use a different channel if need response back to inference engine
+		Event.sendEvent(req);
+		
+		// HTTP sync request to display a book
+		Object con = HTTP.ConnectionInfo.createHTTPConnectionInfo(false);
+		int port = System.getGlobalVariableAsInt("http_port", 8000);
+		Events.ShowBook bookReq = Events.ShowBook.ShowBook(null, null, "/books/OL34102208M", 4);
+		String url = String.format("http://localhost:%d/Channels/HTTP/showBook", port);
+		Events.ShowBook book = HTTP.sendRequest(url, bookReq, "/Events/ShowBook", 10000, con);
+		if (book != null) {
+			Log.log(logger, "info", "Query returned book %s", book@payload);
+		}
+		
+		// HTTP sync request display an author
+		Events.ShowAuthor authorReq = Events.ShowAuthor.ShowAuthor(null, null, "/authors/OL23919A", 89);
+		url = String.format("http://localhost:%d/Channels/HTTP/showAuthor", port);
+		Events.ShowAuthor author = HTTP.sendRequest(url, authorReq, "/Events/ShowAuthor", 10000, con);
+		if (author != null) {
+			Log.log(logger, "info", "Query returned author %s", author@payload);
+		}
+	}
+}

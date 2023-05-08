@@ -1,0 +1,41 @@
+/**
+ * @description 
+ */
+void rulefunction Test.testCreateConcept {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String file;
+	}
+	body {
+		Object logger = Log.getLogger("Test.testCreateConcept");
+		
+		String proj = System.getGlobalVariableAsString("FileLoader/project_root", "");
+		String path = String.format("%s/Test/Data/%s", proj, file);
+		
+		Object fd = RuleFunctions.Load.startFileReader(path /*path String */, 0 /*skip long */);
+		if (fd == null) {
+			Log.log(logger, "warn", "Failed testCreateConcept - cannot read file %s", path);
+			return;
+		}
+		
+		String line = File.fileReadLine(fd);
+		if (line == null) {
+			Log.log(logger, "warn", "Failed testCreateConcept - nothing to read from file %s", path);
+			return;
+		}
+
+		String[] data = String.split(line, "\t");
+		if (data@length < 5) {
+			Log.log(logger, "warn", "Failed testCreateConcept - unexpected data: %s", line);
+			return;
+		}
+		
+		String oid = data[1];
+		long revision = Number.longValue(data[2], 10);
+		Events.CreateConcept evt = Events.CreateConcept.CreateConcept(null, data[4], oid, revision, 0, 0);
+		Log.log(logger, "info", "Send CreateConcept event - %s/%d: %s", oid, revision, data[4]);
+		Event.sendEvent(evt);
+	}
+}

@@ -1,0 +1,55 @@
+/**
+ * @description 
+ */
+String[] rulefunction Query.listToBatchJSON {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		Object list;
+	}
+	body {
+		Object logger = Log.getLogger("Query.listToBatchJSON");
+		
+		if (list == null) {
+			return null;
+		}
+		
+		int size = Query.Util.sizeOfList(list);
+		if (size <= 0) {
+			return null;
+		}
+
+		// construct JSON array of batched extIds
+		Object batchList = Collections.List.createArrayList();
+		int rows = 0;
+		Object buff = String.createBuffer(1024);
+		for (int i = 0; i < size; i++) {
+			String extId = Query.Util.removeFromList(list, 0);
+			Log.log(logger, "debug", "query returned Concept extId %s", extId);
+			if (rows == 0) {
+				String.append(buff, String.format("[\"%s\"", extId));
+			} else {
+				String.append(buff, String.format(", \"%s\"", extId));
+			}
+			rows += 1;
+			if (rows == GlobalValues.CONCEPT_UPDATE_BATCH) {
+				// end of batch record
+				String.append(buff, "]");
+				Collections.add(batchList, String.convertBufferToString(buff));
+				
+				// reset buffer
+				rows = 0;
+				String.clearBuffer(buff);
+			}
+		}
+		if (rows > 0) {
+			// last batch record
+			String.append(buff, "]");
+			Collections.add(batchList, String.convertBufferToString(buff));
+		}
+		
+		// convert list to String[]
+		return Collections.toArray(batchList, String[]{""});
+	}
+}

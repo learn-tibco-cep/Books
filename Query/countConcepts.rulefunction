@@ -1,0 +1,71 @@
+/**
+ * @description 
+ */
+long rulefunction Query.countConcepts {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String entityUri;
+	}
+	body {
+		Object logger = Log.getLogger("Query.countConcepts");
+
+//		Note: this BQL feteches and deserializes entity in the query agent, and may run out of memory
+//		String sql = String.format("select count(x) from %s as x group by 1", entityUri);
+
+		// use native query instead
+		String suffix = String.substringAfter(entityUri,"/Concepts/");
+		if (String.length(suffix) < 0) {
+			Log.log(logger, "info", "Invalid entity URI: %s", entityUri);
+			return 0;
+		}
+		
+		long result = 0;
+		long startTime = System.currentTimeMillis();
+		if (GlobalValues.STORE_OM) {
+			String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+			if (url == "") {
+				Log.log(logger, "info", "Global variable 'ASDG/realmurl' is not configured");
+				return 0;
+			}
+			
+			// use query on database, because BQL is ineficient and cannot handle large number of records.
+			String sql = String.format("select count(*) from d_%s", suffix);
+			Log.log(logger, "debug", "Execute query %s", sql);
+			
+			// TODO: cannot use store query API because it cannot extract count from result
+//			Object iter = Store.query(url, sql, null, null, null);
+
+			// use custom function instead
+			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+			Object list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+			int size = Query.Util.sizeOfList(list);
+			if (size <= 0) {
+				Log.log(logger, "info", "No concept found in %s", entityUri);
+				return 0;
+			}
+				
+			String[] cols = Query.Util.removeFromList(list, 0);
+			result = Number.longValue(cols[0], 10);
+		} else {
+			// use native query on cache, because BQL is ineficient and cannot handle large number of records.
+			String sql = String.format("native-query: select count(*) from be_gen_concepts_%s", suffix);
+			Log.log(logger, "debug", "Execute query: %s", sql);
+
+			// TODO: note that reuse=false in the following call, you may see ArrayOutOfBoundsException if reuse=true
+			Object list = Query.Util.executeInQuerySession("query-class", sql, null, false, GlobalValues.QUERY_TIMEOUT);
+		
+			int size = Query.Util.sizeOfList(list);
+			if (size <= 0) {
+				Log.log(logger, "info", "No concept found in %s", entityUri);
+				return 0;
+			}
+		
+			result = Query.Util.removeFromList(list, 0);
+		}
+
+		Log.log(logger, "info", "Counted %d %s, elapsed %d ms", result, entityUri, (System.currentTimeMillis() - startTime));
+		return result;
+	}
+}

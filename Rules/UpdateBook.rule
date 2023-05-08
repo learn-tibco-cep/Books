@@ -1,0 +1,34 @@
+/**
+ * @description 
+ * @author rjadhav-w540
+ */
+rule Rules.UpdateBook {
+	attribute {
+		priority = 5;
+		forwardChain = true;
+	}
+	declare {
+		Events.UpdateConcept evt;
+		Concepts.Book book;
+	}
+	when {
+		evt.oid == book.book_id;
+		evt.revision == book.revision;
+	}
+	then {
+		Object logger = Log.getLogger("Rules.UpdateBook");
+		
+		book.edit_logs[book.edit_logs@length] = evt.text;
+		book.last_modified = DateTime.now();
+		
+		if (Log.getLevel(logger) == "debug") {
+			Log.log(logger, "debug", "Updated book %s with '%s' in %d edit_logs", book@extId, evt.text, book.edit_logs@length);
+		}
+		
+		if (evt.batchId != null) {
+			Stats.setBatchStat(evt.batchId, System.currentTimeMillis());
+		}
+		Event.replyEvent(evt, evt);
+		Event.consumeEvent(evt);
+	}
+}
