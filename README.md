@@ -94,4 +94,4 @@ In the `Books.cdd`, a system property, `books.app.unitTests = true`, is set to s
    * Query limited number of rows of a specified type by using native cache query or custom Java function - [queryTopRows](./Query/queryTopRows.rulefunction)
 1. Continuous Query in a query node
    * Set `books.app.bql.continuous.count = true` in a query agent
-   * A callback function, [bqlCallback](./Query/bqlCallback) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
+   * A callback function, [bqlCallback](./Query/bqlCallback.rulefunction) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
