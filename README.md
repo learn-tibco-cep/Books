@@ -56,7 +56,7 @@ To run all unit tests after the inference node starts, you can set the following
 books.app.unitTests = true
 tibco.clientVar.FileLoader/project_root = /path/to/project/Books
 ```
-These properties will make the inference engine automatically schedule unit tests that read input data from the project source code under `Books/Test/Data`.
+These properties will make the inference engine automatically schedule unit tests that read input data from the project source folder `Books/Test/Data`.
 
 Start the inference node by using the updated `Books.cdd`:
 
@@ -94,4 +94,4 @@ In the `Books.cdd`, a system property, `books.app.unitTests = true`, is set to s
    * Query limited number of rows of a specified type by using native cache query or custom Java function - [queryTopRows](./Query/queryTopRows.rulefunction)
 1. Continuous Query in a query node
    * Set `books.app.bql.continuous.count = true` in a query agent
-   * A callback function, [bqlCallback]](./Query/bqlCallback) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
+   * A callback function, [bqlCallback](./Query/bqlCallback) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
