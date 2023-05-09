@@ -50,6 +50,16 @@ $BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n query -u query -
 
 The inference node contains an inference agent and a query agent, and so all queries are processed by the same node.
 
+To run all unit tests after the inference node starts, you can set the following cluster-level properties in `Books.cdd`:
+
+```
+books.app.unitTests = true
+tibco.clientVar.FileLoader/project_root = /path/to/project/Books
+```
+These properties will make the inference engine automatically schedule unit tests that read input data from the project source code under `Books/Test/Data`.
+
+Start the inference node by using the updated `Books.cdd`:
+
 ```
 $BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n default-0 -u default -c ${WS}/Books.cdd Books.ear
 ```

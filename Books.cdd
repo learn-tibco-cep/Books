@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cluster xmlns="http://tibco.com/businessevents/configuration/6.2">
     <revision>
-        <version>151</version>
+        <version>152</version>
         <author>yxu</author>
-        <date>2023/05/08 11:23:14</date>
+        <date>2023/05/09 08:39:57</date>
         <comment/>
     </revision>
     <name>Books</name>
@@ -1584,6 +1584,6 @@
         <property name="tibco.clientVar.FileLoader/shared_threads" value="10"/>
         <property name="books.app.queryTimeout" value="60000"/>
         <property name="books.app.skipBookByAuthor" value="false"/>
-        <property name="books.app.unitTests" value="true"/>
+        <property name="books.app.unitTests" value="false"/>
     </property-group>
 </cluster>
