@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cluster xmlns="http://tibco.com/businessevents/configuration/6.2">
     <revision>
-        <version>150</version>
+        <version>151</version>
         <author>yxu</author>
-        <date>2023/05/08 08:57:07</date>
+        <date>2023/05/10 10:44:09</date>
         <comment/>
     </revision>
     <name>Books</name>
@@ -654,6 +654,12 @@
                             </property>
                             <property>
                                 <name>SKIP_BOOK_BY_AUTHOR</name>
+                            </property>
+                            <property>
+                                <name>USE_AUTHOR_PK</name>
+                            </property>
+                            <property>
+                                <name>USE_BOOK_PK</name>
                             </property>
                         </properties>
                     </backing-store>
