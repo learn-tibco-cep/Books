@@ -1,0 +1,63 @@
+#
+#	TIBCO BusinessEvents 6.2.2.044 (2022-06-07)
+#	Using arguments :-o /Users/yxu/work/be6/perf-test/as4/perf -c /Users/yxu/work/be6/proj2/Books/BooksAS4.cdd -s ACTIVESPACES ./Books.ear 
+#	Copyright(c) 2004-2022 TIBCO Software Inc. All rights reserved.
+#
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_author extid string
+column create d_author parentid$ opaque rrf$ opaque author_id string name string revision long location string alternate_names opaque bio string birth_date string death_date string active_date string entity_type string fuller_name string personal_name string title string links opaque remote_ids opaque latest_revision long created datetime last_modified datetime photos opaque source_records opaque website string wikipedia string photograph string edit_logs opaque time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_authorremoteid extid string
+column create d_authorremoteid parentid$ opaque rrf$ opaque wikidata string viaf string isni string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_authorrole extid string
+column create d_authorrole parentid$ opaque rrf$ opaque author string role string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_book extid string
+column create d_book parentid$ opaque rrf$ opaque book_id string title string publishers opaque authors opaque table_of_contents opaque links opaque first_sentence string works opaque identifiers opaque isbn_10 opaque isbn_13 opaque lccn opaque ocaid string oclc_numbers opaque local_id opaque covers opaque languages opaque translated_from opaque translation_of string by_statement string weight string edition_name string number_of_pages long pagination string physical_dimensions string physical_format string copyright_date string publish_country string publish_date string subject_place opaque contributions opaque dewey_decimal_class opaque genres opaque lc_classifications opaque other_titles opaque series opaque source_records opaque subjects opaque work_title opaque description string notes string revision long latest_revision long last_modified datetime created datetime subtitle string url opaque uris opaque uri_descriptions opaque publish_places opaque subject_time opaque edit_logs opaque time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_bookauthorxref author_id string book_id string book_version long
+column create d_bookauthorxref extid string parentid$ opaque rrf$ opaque time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_bookidentifier extid string
+column create d_bookidentifier parentid$ opaque rrf$ opaque name string ids opaque time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_excerpt extid string
+column create d_excerpt parentid$ opaque rrf$ opaque comment_ string excerpt string author string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_link extid string
+column create d_link parentid$ opaque rrf$ opaque url string title string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_authorlink extid string
+column create d_authorlink parentid$ opaque rrf$ opaque url string title string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_booklink extid string
+column create d_booklink parentid$ opaque rrf$ opaque url string title string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_worklink extid string
+column create d_worklink parentid$ opaque rrf$ opaque url string title string time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_tableofcontent extid string
+column create d_tableofcontent parentid$ opaque rrf$ opaque title string level_ long time_created$ datetime time_last_modified$ datetime state$ string
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 d_work extid string
+column create d_work parentid$ opaque rrf$ opaque work_id string title string subtitle string authors opaque covers opaque links opaque lc_classifications opaque subjects opaque subject_places opaque subject_people opaque subject_times opaque first_publish_date string description string revision long latest_revision long created datetime last_modified datetime excerpts opaque edit_logs opaque time_created$ datetime time_last_modified$ datetime state$ string
+
+index create d_author author_revision_idx revision
+
+index create d_author author_last_modified_idx last_modified
+
+index create d_book book_revision_idx revision
+
+index create d_book book_last_modified_idx last_modified
+
+
+
+
+
+
+
+
+
+
+
+

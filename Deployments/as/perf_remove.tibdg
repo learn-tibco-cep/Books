@@ -1,0 +1,52 @@
+table delete d_author
+table delete d_authorremoteid
+table delete d_authorrole
+table delete d_book
+table delete d_bookauthorxref
+table delete d_bookidentifier
+table delete d_excerpt
+table delete d_link
+table delete d_authorlink
+table delete d_booklink
+table delete d_worklink
+table delete d_tableofcontent
+table delete d_work
+index delete objecttable i_objecttable
+index delete objecttable i_ObjectTable_id
+index delete objecttable i_objecttable_isdeleted
+index delete workitemtable i_workitems
+
+table delete classregistry
+table delete statemachinetimeout
+table delete classtotable
+table delete cacheids
+table delete objecttable
+table delete workitemtable
+table delete bealiases
+
+table create row_counts=exact classregistry className string
+column create classregistry typeId long
+
+table create row_counts=exact statemachinetimeout id long
+column create statemachinetimeout cacheid long propertyName string currentTime long nextTime long closure string ttl long fired long time_created datetime extId string state string
+
+table create row_counts=exact classtotable tableName string
+column create classtotable className string fieldName string
+
+table create row_counts=exact cacheids cacheidgeneratorname string
+column create cacheids nextcacheid long
+
+table create row_counts=exact expiration_scan_period=60 default_ttl=86400000000000000 objecttable globalid long
+column create objecttable siteid long id long extid string classname string isdeleted long timedeleted long
+
+table create row_counts=exact workitemtable workkey string
+column create workitemtable workqueue string scheduledtime long workstatus long work opaque
+
+table create row_counts=exact bealiases bename string
+column create bealiases alias string
+
+index create objecttable i_objecttable extid
+index create objecttable i_ObjectTable_id id
+index create objecttable i_objecttable_isdeleted isdeleted
+index create workitemtable i_workitems workqueue scheduledtime
+
