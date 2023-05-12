@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cluster xmlns="http://tibco.com/businessevents/configuration/6.2">
     <revision>
-        <version>163</version>
+        <version>166</version>
         <author>yxu</author>
-        <date>2023/05/08 08:57:07</date>
+        <date>2023/05/12 11:27:06</date>
         <comment/>
     </revision>
     <name>Books</name>
@@ -652,6 +652,12 @@
                             </property>
                             <property>
                                 <name>SKIP_BOOK_BY_AUTHOR</name>
+                            </property>
+                            <property>
+                                <name>USE_AUTHOR_PK</name>
+                            </property>
+                            <property>
+                                <name>USE_BOOK_PK</name>
                             </property>
                         </properties>
                     </backing-store>
@@ -1532,5 +1538,6 @@
         <property name="tibco.clientVar.ASDG/grid" value="perf-grid"/>
         <property name="books.app.queryTimeout" value="60000"/>
         <property name="tibco.clientVar.ASDG/tibdg_timeout" value="30"/>
+        <property name="books.app.unitTests" value="false"/>
     </property-group>
 </cluster>

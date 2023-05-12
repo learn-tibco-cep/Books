@@ -14,6 +14,7 @@ String rulefunction Query.queryTopRows {
 		Object logger = Log.getLogger("Query.queryTopRows");
 
 		long startTime = System.currentTimeMillis();
+		String[] props = String.split(columns, ",");
 		Object list = null;
 		if (!GlobalValues.STORE_OM) {
 			// use native query on cache
@@ -24,8 +25,25 @@ String rulefunction Query.queryTopRows {
 			// query statement for AS data grid
 			String sql = String.format("select %s from d_%s limit %d", columns, name, limit);
 			Log.log(logger, "debug", "Execute query %s", sql);
-			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
-			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+			String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+			Object result = Store.query(url, sql, null, null, null);		
+			list = Collections.List.createArrayList();
+			while (Collections.Iterator.hasNext(result)) {
+				String[] value = String[props@length]{};
+				Object row = Collections.Iterator.next(result);
+				// TODO: for simplicity, assume that we query only string fields here
+				for (int i = 0; i < props@length; i++) {
+					if (String.endsWith(props[i], "revision") || String.endsWith(props[i], "version")) {
+						value[i] = String.valueOfLong(Store.Item.getLong(row, props[i]));
+					} else {
+						value[i] = Store.Item.getString(row, props[i]);
+					}
+				}
+				Collections.add(list, value);
+			}
+			// custom function below handles different field types
+//			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+//			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
 		}
 		
 		int size = Query.Util.sizeOfList(list);
@@ -36,7 +54,6 @@ String rulefunction Query.queryTopRows {
 		Log.log(logger, "info", "query returned %d rows of %s, elapsed %d ms", size, name, (System.currentTimeMillis()-startTime));
 		
 		Object buff = String.createBuffer(1024);
-		String[] props = String.split(columns, ",");
 		String.append(buff, "[");
 		for (int i = 0; i < size; i++) {
 			if (i > 0) {

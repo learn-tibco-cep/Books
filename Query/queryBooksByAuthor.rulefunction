@@ -26,8 +26,18 @@ String[] rulefunction Query.queryBooksByAuthor {
 			// query AS data grid using custom function
 			String sql = String.format("select book_id, book_version from d_bookauthorxref where author_id = '%s'", aid);
 			Log.log(logger, "debug", "Execute query %s", sql);
-			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
-			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
+			String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+			Object result = Store.query(url, sql, null, null, null);		
+			list = Collections.List.createArrayList();
+			while (Collections.Iterator.hasNext(result)) {
+				Object row = Collections.Iterator.next(result);
+				String[] value = String[2]{};
+				value[0] = Store.Item.getString(row, "book_id");
+				value[1] = String.valueOfLong(Store.Item.getLong(row, "book_version"));
+				Collections.add(list, value);
+			}
+//			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());
+//			list = CustomFunction.executeQuery(session, sql, GlobalValues.QUERY_TIMEOUT);
 		}
 		
 		int size = Query.Util.sizeOfList(list);
@@ -39,7 +49,7 @@ String[] rulefunction Query.queryBooksByAuthor {
 		String[] bids = String[size]{};
 		for(int i = 0; i < size; i++) {
 			Object[] row = Query.Util.removeFromList(list, 0);
-			bids[i] = String.format("/books/%s/%d", row[0], row[1]);
+			bids[i] = String.format("/books/%s/%s", row[0], ""+row[1]);
 			Log.log(logger, "debug", "Author's book id %s", bids[i]);
 		}
 		return bids;

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cluster xmlns="http://tibco.com/businessevents/configuration/6.2">
     <revision>
-        <version>151</version>
+        <version>152</version>
         <author>yxu</author>
-        <date>2023/05/10 10:44:09</date>
+        <date>2023/05/12 11:28:37</date>
         <comment/>
     </revision>
     <name>Books</name>
@@ -1588,5 +1588,6 @@
         <property name="tibco.clientVar.DB/username" value="postgres"/>
         <property name="tibco.clientVar.DB/password" value="postgres"/>
         <property name="books.app.queryTimeout" value="60000"/>
+        <property name="books.app.unitTests" value="false"/>
     </property-group>
 </cluster>
