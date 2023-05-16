@@ -1,0 +1,103 @@
+#!/bin/bash
+#
+# Usage:
+# request load <limit> (default limit 400000)
+# request update <limit> <repeat> (default limit 40000 repeat 1)
+# request cleanup
+
+SERVER=na2devbedev04:8001
+DATA=/home/perf-test/ol-data
+# seconds to wait after slow batch ops
+DELAY=60
+
+if [ "$1" == "load" ]; then
+  # load data from file
+  N=400000
+  if [ ! -z "$2" ]; then
+    N=$2
+  fi
+
+  curl -v "http://$SERVER/Channels/HTTP/loadFromFile?path=$DATA/ol_dump_authors_latest.txt&skip=0&rows=${N}&dataType=authors"
+  sleep $DELAY
+#  curl -v "http://$SERVER/Channels/HTTP/loadFromFile?path=$DATA/ol_dump_works_latest.txt&skip=0&rows=${N}&dataType=works"
+  curl -v "http://$SERVER/Channels/HTTP/loadFromFile?path=$DATA/ol_dump_editions_latest.txt&skip=0&rows=${N}&dataType=books"
+
+  echo "Loaded $N authors, works, and books from file"
+elif [ "$1" == "cleanup" ]; then
+  # clean up negative revisions and revoke updated records
+  curl -v "http://$SERVER/Channels/HTTP/deleteRevisions?entityUri=/Concepts/Author"
+  curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Author&action=revoke&minDate=2023-04-01T00:00:00"
+  sleep $DELAY
+  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Author"
+  curl -v "http://$SERVER/Channels/HTTP/showAuthor?author_id=/authors/OL10295160A&revision=1"
+
+#  curl -v "http://$SERVER/Channels/HTTP/deleteRevisions?entityUri=/Concepts/Work"
+#  curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Work&action=revoke&minDate=2023-04-01T00:00:00"
+#  sleep $DELAY
+#  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Work"
+#  curl -v "http://$SERVER/Channels/HTTP/showWork?work_id=/works/OL1058833W&revision=2"
+
+  curl -v "http://$SERVER/Channels/HTTP/deleteRevisions?entityUri=/Concepts/Book"
+  curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Book&action=revoke&minDate=2023-04-01T00:00:00"
+  sleep $DELAY 
+  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Book"
+  curl -v "http://$SERVER/Channels/HTTP/showBook?book_id=/books/OL10262183M&revision=5"
+
+  echo ""
+  echo "Cleaned up test data of authors, works, and books"
+elif [ "$1" == "update" ]; then
+  # update records and create negative revisions
+  N=40000
+  if [ ! -z "$2" ]; then
+    N=$2
+  fi
+  R=1
+  if [ ! -z "$3" ]; then
+    R=$3
+  fi
+
+  i=1
+  offset=0
+  while [ $i -le $R ]; do
+    echo "update round $i limit $N offset $offset"
+
+    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Author&action=revision&limit=${N}&offset=${offset}&maxRev=-1&minRev=-2"
+    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Book&action=revision&limit=${N}&offset=${offset}&maxRev=-1&minRev=-2"
+    sleep $DELAY
+    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Author&action=update&limit=${N}&offset=${offset}"
+    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Book&action=update&limit=${N}&offset=${offset}"
+    sleep $DELAY 
+    curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Author"
+    curl -v "http://$SERVER/Channels/HTTP/showAuthor?author_id=/authors/OL10295160A&revision=1"
+    curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Book"
+    curl -v "http://$SERVER/Channels/HTTP/showBook?book_id=/books/OL10262183M&revision=5"
+
+#    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Work&action=revision&limit=${N}&offset=${offset}&maxRev=-1&minRev=-2"
+#    curl -v "http://$SERVER/Channels/HTTP/updateByQuery?entityUri=/Concepts/Work&action=update&limit=${N}&offset=${offset}"
+#    sleep $DELAY
+#    curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Work"
+#    curl -v "http://$SERVER/Channels/HTTP/showWork?work_id=/works/OL1058833W&revision=2"
+
+    echo ""
+    echo "Updated authors, works and books with limit $N and offset $offset"
+    i=$(( $i + 1 ))
+    offset=$(( $offset + $N ))
+  done
+else
+  # count records in cache
+  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Author"
+#  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Work"
+  curl -v "http://$SERVER/Channels/HTTP/countConcepts?entityUri=/Concepts/Book"
+
+  # create cache index
+  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Author&fields=last_modified&sorted=true"
+  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Author&fields=revision&sorted=true"
+#  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Work&fields=last_modified&sorted=true"
+#  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Work&fields=revision&sorted=true"
+  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Book&fields=last_modified&sorted=true"
+  curl -v "http://$SERVER/Channels/HTTP/createIndex?entityUri=/Concepts/Book&fields=revision&sorted=true"
+
+  echo ""
+  echo "Supported test commands are load, update, and cleanup"
+fi
+

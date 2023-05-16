@@ -1,0 +1,22 @@
+# start test engine
+# ./start [default|cache|query]
+CDD=./Books.cdd
+BE_HOME=$HOME/tibco/be/6.2
+
+PU=$1
+if  [ -z "$1" ]; then
+  PU=default
+fi
+echo "start PU $PU"
+
+ENG=$PU
+if [ "$ENG" = "default" ] || [ "$ENG" = "cache" ]; then
+  SEQ=$2
+  if [ -z "$2" ]; then
+    SEQ=0
+  fi
+  ENG="${PU}-${SEQ}"
+  echo "engine name $ENG"
+fi
+
+$BE_HOME/bin/be-engine --propFile $BE_HOME/bin/be-engine.tra -n $ENG -u $PU -c $CDD ./Books.ear > /dev/null 2>&1 &
