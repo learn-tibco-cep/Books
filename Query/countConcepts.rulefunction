@@ -31,11 +31,17 @@ long rulefunction Query.countConcepts {
 			}
 			
 			// use query on database, because BQL is ineficient and cannot handle large number of records.
-			String sql = String.format("select count(*) from d_%s", suffix);
+			String sql = String.format("select count(*) as c from d_%s", suffix);
 			Log.log(logger, "debug", "Execute query %s", sql);
 			
-			// TODO: cannot use store query API because it cannot extract count from result
+//			// TODO: cannot use store query API because it cannot extract count from result
 //			Object iter = Store.query(url, sql, null, null, null);
+//			Object row = Collections.Iterator.next(iter);
+//			if (row == null) {
+//				Log.log(logger, "info", "No concept found in %s", entityUri);
+//				return 0;
+//			}
+//			result = Store.Item.getLong(row, "c");
 
 			// use custom function instead
 			Object session = Collections.Map.get(Collections.Map.getMap("storeSession"), Query.asStoreKey());

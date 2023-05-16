@@ -40,6 +40,16 @@ void rulefunction RuleFunctions.Preprocessors.onDeleteConcept {
 			if (!locked) {
 				Log.log(logger, "warn", "Failed to LOCK Concept %s after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
 			} else {
+//					// test delete using store catalog function, but it does not work with extId
+//                  // TODO: it supports only explicit primary keys currently, may require enhancement for extId
+//					Concept con = Instance.newInstance(conUri, extId);
+//					Log.log(logger, "info", "Delete concept %s", con@extId);
+//					String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+//					String cName = "d_" + String.toLowerCase(String.substringAfter(conUri, "/Concepts/"));
+//					Store.open(url, cName);
+//					Store.delete(url, cName, con);
+//					Instance.deleteInstance(con);
+
 				// check existence if required
 				Concept con;
 				if (GlobalValues.LOCK_LOCAL) {
