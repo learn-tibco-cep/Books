@@ -41,6 +41,19 @@ void rulefunction RuleFunctions.Preprocessors.onUpdateConcept {
 			if (!locked) {
 				Log.log(logger, "warn", "Failed to LOCK concept %s for update after %d ms", extId, GlobalValues.LOCK_WAIT_TIMEOUT);
 			} else {
+//					// test using store catalog function to load concept, , but it does not work with the implicit key extId
+//					// Concept keyCon = Instance.newInstance(conUri, extId);
+//					Concept keyCon = Instance.newTransientInstance(conUri);
+//					CustomFunction.setExtId(keyCon, extId);
+//					Log.log(logger, "info", "update concept %s", keyCon@extId);
+//					String url = System.getGlobalVariableAsString("ASDG/realmurl", "");
+//					String cName = "d_" + String.toLowerCase(String.substringAfter(conUri, "/Concepts/"));
+//					Store.open(url, cName);
+//					con = Store.get(url, cName, keyCon);
+//					if (con != null) {
+//						Log.log(logger, "info", "loaded concept %s", con@extId);
+//					}
+
 				// fetch concept
 				if (GlobalValues.LOCK_LOCAL) {
 					con = Instance.getByExtIdByUri(extId, conUri);

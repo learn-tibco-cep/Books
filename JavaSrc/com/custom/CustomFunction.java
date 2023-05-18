@@ -44,7 +44,7 @@ public class CustomFunction{
 
 	@BEFunction(
 			name = "createIndex",
-			signature = "void createIndex (String cacheName)",
+			signature = "void createIndex (conceptUri, cacheName)",
 			params = {
 					@FunctionParamDescriptor(name = "conceptUri", type = "String", desc = "" /*Add Description here*/),
 					@FunctionParamDescriptor(name = "cacheName", type = "String", desc = "" /*Add Description here*/)
@@ -93,7 +93,7 @@ public class CustomFunction{
 
 	@BEFunction(
 			name = "setExtId",
-			signature = "void setExtId (Entity obj, String extId)",
+			signature = "void setExtId (obj, extId)",
 			params = {
 					@FunctionParamDescriptor(name = "obj", type = "Entity", desc = "Concept or Event instance to reset extId"),
 					@FunctionParamDescriptor(name = "extId", type = "String", desc = "new extId of the entity")
