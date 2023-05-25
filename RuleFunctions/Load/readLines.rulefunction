@@ -1,5 +1,7 @@
 /**
- * @description 
+ * @description read specified number of lines from a ol dump file.
+ *   If configured in-memory, send event to create concept for individual lines
+ *   If not in-memory, return the rows in a combined JSON string, which will be processed as a batch
  */
 String rulefunction RuleFunctions.Load.readLines {
 	attribute {
@@ -8,6 +10,7 @@ String rulefunction RuleFunctions.Load.readLines {
 	scope {
 		Object fd;
 		long rows;
+		String batchId;
 	}
 	body {
 		Object logger = Log.getLogger("RuleFunctions.Load.readLines");
@@ -56,14 +59,20 @@ String rulefunction RuleFunctions.Load.readLines {
 					}
 				}
 
-				// find start location of JSON object 
-				int pos = String.indexOfString(line, 0, "{");
-				if (pos >= 0) {
-					if (c > 0) {
-						String.append(buff, ",");
+				if (GlobalValues.LOCK_LOCAL) {
+					// cache loaded extIds for later update tests
+					RuleFunctions.Load.sendCreateEvent(line, batchId);
+					c += 1;
+				} else {
+					// find start location of JSON object 
+					int pos = String.indexOfString(line, 0, "{");
+					if (pos >= 0) {
+						if (c > 0) {
+							String.append(buff, ",");
+						}
+						c += 1;
+						String.append(buff, String.substring(line, pos, String.length(line)));
 					}
-					c = c + 1;
-					String.append(buff, String.substring(line, pos, String.length(line)));
 				}
 			}
 		}

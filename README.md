@@ -12,6 +12,10 @@ This project has configured the following commonly used persistent stores and pr
 * [BooksCas.cdd](./BooksCas.cdd) - Apache Ignite data grid with Cassandra 4.1 as the backing store
 * [BooksAS4store.cdd](./BooksAS4store.cdd) - ActiveSpaces 4.x as the persistent store with no cache cluster
 
+The above configurations are used to test performance of batched creation, update, and delete of large amount of data records.
+
+We also provide a [BooksEMS.cdd](./BooksEMS.cdd), which uses in-memory deployment without cache or persistence.  In this deployment, batched creation and update operations are implemented as individual JMS messages, and therefore, it is a special setup used to test JMS producers and consumers of large number of JMS messages.
+
 Detailed description for this tutorial can be found in [Wiki page](https://github.com/learn-tibco-cep/tutorials/wiki/Data-Persistence).
 
 ## Components
@@ -95,3 +99,18 @@ In the `Books.cdd`, a system property, `books.app.unitTests = true`, is set to s
 1. Continuous Query in a query node
    * Set `books.app.bql.continuous.count = true` in a query agent
    * A callback function, [bqlCallback](./Query/bqlCallback.rulefunction) will be invoked when new concepts are created.  The callback will print out new changes in an interval specified by the property `books.app.bql.callback.window`.
+   
+## Sample Requests
+Sample requests for performance testing are included in the script: [request](./Deployments/request).
+
+For example, you may use the following HTTP requests to load data from open-library data dump files, and then display a known author or book as follows.
+
+```
+curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/Users/yxu/work/be6/perf-test/data/ol_dump_authors_2023-01-10.txt&skip=0&rows=10000&dataType=authors"
+
+curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/Users/yxu/work/be6/perf-test/data/ol_dump_editions_2023-01-10.txt&skip=0&rows=10000&dataType=books"
+
+curl -v "http://localhost:8001/Channels/HTTP/showAuthor?author_id=/authors/OL10834537A&revision=1"
+
+curl -v "http://localhost:8001/Channels/HTTP/showBook?book_id=/books/OL11046845M&revision=3"
+```

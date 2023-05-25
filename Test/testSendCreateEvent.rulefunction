@@ -1,0 +1,49 @@
+/**
+ * @description 
+ */
+void rulefunction Test.testSendCreateEvent {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+
+	}
+	body {
+		Object logger = Log.getLogger("Test.testSendCreateEvent");
+		
+		String[] files = String[]{"ol_test_authors.txt", "ol_test_works.txt", "ol_test_books.txt"};
+		String proj = System.getGlobalVariableAsString("FileLoader/project_root", "");
+		
+		for (int i = 0; i < files@length; i++) {
+			String file = files[i];
+
+			String path = String.format("%s/Test/Data/%s", proj, file);	
+			Object fd = RuleFunctions.Load.startFileReader(path /*path String */, 0 /*skip long */);
+			if (fd == null) {
+				Log.log(logger, "warn", "Failed - cannot read file %s", path);
+				continue;
+			}
+		
+			String line = File.fileReadLine(fd);
+			if (line == null) {
+				Log.log(logger, "warn", "Failed - nothing to read from file %s", path);
+				continue;
+			}
+			while (line != null) {
+				Log.log(logger, "info", "Cache input: %s", line);
+				RuleFunctions.Load.sendCreateEvent(line, null);
+				line = File.fileReadLine(fd);
+			}
+			File.fileClose(fd);
+		}
+		
+		String[] setIds = String[]{"/Concepts/Author", "/Concepts/Work", "/Concepts/Book"};
+		for (int i = 0; i < setIds@length; i++) {
+			String entityUri = setIds[i];
+			Object set = Collections.Set.getSet(entityUri);
+			if (set != null) {
+				Log.log(logger, "info", "Set %s collected total of %d items", entityUri,  Collections.size(set));
+			}
+		}
+	}
+}

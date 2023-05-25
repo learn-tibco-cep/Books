@@ -13,4 +13,5 @@
   <properties name="SKIP_BOOK_BY_AUTHOR" ownerProjectName="Books" type="boolean"/>
   <properties name="USE_AUTHOR_PK" ownerProjectName="Books" type="boolean"/>
   <properties name="USE_BOOK_PK" ownerProjectName="Books" type="boolean"/>
+  <properties name="PRINT_STAT" ownerProjectName="Books" type="long"/>
 </element:Scorecard>

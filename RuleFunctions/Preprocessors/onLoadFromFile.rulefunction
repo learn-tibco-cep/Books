@@ -25,19 +25,28 @@ void rulefunction RuleFunctions.Preprocessors.onLoadFromFile {
 		long rows = 0;
 		long count = 0;
 		long startTime = System.currentTimeMillis();
+		
+		String batchId = null;
+		if (GlobalValues.LOCK_LOCAL) {
+			batchId = String.format("CreateConcepts-%d", System.currentTimeMillis());
+			Stats.addBatch(batchId, 0);
+		}
+		
 		while (evt.rows <= 0 || rows < evt.rows) {
 			long toRead = GlobalValues.FILE_LOAD_BATCH;
 			if (evt.rows > 0 && GlobalValues.FILE_LOAD_BATCH > evt.rows - rows) {
 				toRead = evt.rows - rows;
 			}
-			String lines = RuleFunctions.Load.readLines(fd, toRead);
+			String lines = RuleFunctions.Load.readLines(fd, toRead, batchId);
 			if (lines == null) {
 				Log.log(logger, "info", "No more data to read from file: %s", evt.path);
 				break;
 			}
 			rows = rows + toRead;
-			Event.sendEvent(Events.Load.LoadBatch.LoadBatch(null, lines, evt.dataType));
-			count = count + 1;
+			if (!GlobalValues.LOCK_LOCAL) {
+				Event.sendEvent(Events.Load.LoadBatch.LoadBatch(null, lines, evt.dataType));
+				count = count + 1;
+			}
 		}
 		Log.log(logger, "info", "Dispatched %d events to load %d records from file %s, elapsed %d ms", 
 			count, rows, evt.path, (System.currentTimeMillis() - startTime));

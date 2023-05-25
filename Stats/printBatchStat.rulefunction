@@ -11,7 +11,7 @@ void rulefunction Stats.printBatchStat {
 	}
 	body {
 		Object logger = Log.getLogger("Stats.printBatchStat");
-		Log.log(logger, "info", "Completed batch %s: count %d, elapsed [%d, %d] ms",
+		Log.log(logger, "info", "Perf stat for batch: %s count: %d  elapsed: [ %d, %d ] ms",
 			batchId, stat[0], (stat[3] - stat[2]), (stat[4] - stat[2]));
 	}
 }

@@ -10,13 +10,13 @@
       <properties xsi:type="designtime:SimpleProperty" name="async.server.url.property" value="ProviderURL"/>
       <properties xsi:type="designtime:SimpleProperty" name="async.channelName.property" value="Name"/>
     </properties>
-    <destinations folder="/Channels/JMS/" name="createConcept" description="" GUID="EE22ECCF-47ED-9BB1-D4F5-BFDC71D89C1D" ownerProjectName="Books" eventURI="/Events/CreateConcept" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.BytesMessageSerializer" driverConfig="//@driver">
+    <destinations folder="/Channels/JMS/" name="createConcept" description="" GUID="EE22ECCF-47ED-9BB1-D4F5-BFDC71D89C1D" ownerProjectName="Books" eventURI="/Events/CreateConcept" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
       <properties>
         <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="Name" value="create_author"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Name" value="create_concept"/>
         <properties xsi:type="designtime:SimpleProperty" name="Selector" value=""/>
         <properties xsi:type="designtime:SimpleProperty" name="DeliveryMode" value="2"/>
         <properties xsi:type="designtime:SimpleProperty" name="AckMode" value="23"/>
@@ -26,10 +26,10 @@
         <properties xsi:type="designtime:SimpleProperty" name="SharedSubscriptionName" value=""/>
       </properties>
     </destinations>
-    <destinations folder="/Channels/JMS/" name="showAuthor" description="" GUID="C7656E69-6300-8EE6-5754-CF57F715C9A0" ownerProjectName="Books" eventURI="/Events/ShowAuthor" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.BytesMessageSerializer" driverConfig="//@driver">
+    <destinations folder="/Channels/JMS/" name="showAuthor" description="" GUID="C7656E69-6300-8EE6-5754-CF57F715C9A0" ownerProjectName="Books" eventURI="/Events/ShowAuthor" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
       <properties>
         <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="Name" value="show_author"/>
@@ -42,10 +42,10 @@
         <properties xsi:type="designtime:SimpleProperty" name="SharedSubscriptionName" value=""/>
       </properties>
     </destinations>
-    <destinations folder="/Channels/JMS/" name="showBook" description="" GUID="1C49DE13-1881-D1C8-20FC-B8D5EADACE00" ownerProjectName="Books" eventURI="/Events/ShowBook" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.BytesMessageSerializer" driverConfig="//@driver">
+    <destinations folder="/Channels/JMS/" name="showBook" description="" GUID="1C49DE13-1881-D1C8-20FC-B8D5EADACE00" ownerProjectName="Books" eventURI="/Events/ShowBook" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
       <properties>
         <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="false"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="Name" value="show_book"/>
@@ -58,13 +58,28 @@
         <properties xsi:type="designtime:SimpleProperty" name="SharedSubscriptionName" value=""/>
       </properties>
     </destinations>
-    <destinations folder="/Channels/JMS/" name="updateConcept" description="" GUID="C3D3639F-678F-600F-AD96-C15A62335063" ownerProjectName="Books" eventURI="/Events/UpdateConcept" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.BytesMessageSerializer" driverConfig="//@driver">
+    <destinations folder="/Channels/JMS/" name="updateConcept" description="" GUID="C3D3639F-678F-600F-AD96-C15A62335063" ownerProjectName="Books" eventURI="/Events/UpdateConcept" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
       <properties>
         <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="false"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="Name" value="update_author"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Name" value="update_concept"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Selector" value=""/>
+        <properties xsi:type="designtime:SimpleProperty" name="DeliveryMode" value="2"/>
+        <properties xsi:type="designtime:SimpleProperty" name="AckMode" value="23"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Priority" value="4"/>
+        <properties xsi:type="designtime:SimpleProperty" name="TTL" value="0"/>
+        <properties xsi:type="designtime:SimpleProperty" name="DurableSuscriberName" value="%%Deployment%%:%%EngineName%%:%%SessionName%%:%%ChannelURI%%:%%DestinationName%%"/>
+        <properties xsi:type="designtime:SimpleProperty" name="SharedSubscriptionName" value=""/>
+      </properties>
+    </destinations>
+    <destinations name="showWork" description="" GUID="91E343EB-4673-6BD8-C238-33A626E5F625" ownerProjectName="Books" eventURI="/Events/ShowWork" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
+      <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Name" value="show_work"/>
         <properties xsi:type="designtime:SimpleProperty" name="Selector" value=""/>
         <properties xsi:type="designtime:SimpleProperty" name="DeliveryMode" value="2"/>
         <properties xsi:type="designtime:SimpleProperty" name="AckMode" value="23"/>

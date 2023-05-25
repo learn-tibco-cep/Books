@@ -49,6 +49,9 @@ void rulefunction RuleFunctions.startup {
 		
 		// Skip books whose author is not loaded.
 		GlobalValues.SKIP_BOOK_BY_AUTHOR = System.getSystemPropertyAsBoolean("books.app.skipBookByAuthor", false);
+
+		// Print perf stats for batch at this interval if batchSize is not specified
+		GlobalValues.PRINT_STAT = System.getSystemPropertyAsLong("books.app.printStat", 500);
 		
 		System.debugOut("**** startup");
 		System.debugOut("**** Using Legacy ID - " + useLegacy);
@@ -66,7 +69,7 @@ void rulefunction RuleFunctions.startup {
 		System.debugOut("**** STORE_OM - " + GlobalValues.STORE_OM);
 		System.debugOut("**** QUERY_TIMEOUT - " + GlobalValues.QUERY_TIMEOUT);
 		System.debugOut("**** SKIP_BOOK_BY_AUTHOR - " + GlobalValues.SKIP_BOOK_BY_AUTHOR);
-		
+		System.debugOut("**** PRINT_STAT - " + GlobalValues.PRINT_STAT);		
 		Stats.initStats();
 		
 		if (GlobalValues.STORE_OM) {

@@ -35,7 +35,10 @@ void rulefunction RuleFunctions.Preprocessors.onShowAuthor {
 				Log.log(logger, "debug", "Loaded author from cache: %s %d - %s", author.author_id, author.revision, author.name);
 				String.append(buff, String.format(", \"name\": \"%s\", \"edit_logs\": %d", author.name, author.edit_logs@length));
 				
-				String[] bExtIds = Query.queryBooksByAuthor(evt.author_id);
+				String[] bExtIds = null;
+				if (!GlobalValues.LOCK_LOCAL) {
+					bExtIds = Query.queryBooksByAuthor(evt.author_id);
+				}
 				if (bExtIds != null && bExtIds@length > 0) {
 					String.append(buff, ", \"books\": [");
 					// TODO: bulk load does not work, so work-around to fetch individual book in a loop

@@ -5,6 +5,7 @@
   <properties name="revision" ownerProjectName="Books" type="long" conceptTypePath="/Events/CreateConcept"/>
   <properties name="maxNewRev" ownerProjectName="Books" type="long"/>
   <properties name="minNewRev" ownerProjectName="Books" type="long"/>
+  <properties name="batchId" ownerProjectName="Books"/>
   <expiryAction folder="/Events/CreateConcept" name="CreateAuthorEvent_expiryAction" ownerProjectName="Books" actionText="" conditionText="">
     <symbols>
       <symbolList idName="createauthorevent" type="/Events/CreateConcept"/>

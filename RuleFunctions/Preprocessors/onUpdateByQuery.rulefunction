@@ -17,6 +17,29 @@ void rulefunction RuleFunctions.Preprocessors.onUpdateByQuery {
 	body {
 		Object logger = Log.getLogger("RuleFunctions.Preprocessors.onUpdateByQuery");
 		long startTime = System.currentTimeMillis();
+		if (GlobalValues.LOCK_LOCAL) {
+			// send individual update concept event when deployed in-memory
+			if (evt.action == "update") {
+				Object set = Collections.Set.getSet(evt.entityUri);
+				if (set != null) {
+					String batchId = String.format("UpdateConcepts-%d", System.currentTimeMillis());
+					Stats.addBatch(batchId, 0);
+					
+					Object iter = Collections.iterator(set);
+					while (Collections.Iterator.hasNext(iter)) {
+						String extId = Collections.Iterator.next(iter);
+						int idx = String.lastIndexOfString(extId, 0, "/");
+						String oid = String.left(extId, idx);
+						long revision = Number.longValue(String.substring(extId, idx+1, String.length(extId)), 10);
+						Events.UpdateConcept req = Events.UpdateConcept.UpdateConcept(null, null, oid, revision, null, batchId);
+						Event.Ext.routeToImmediate(req, "/Channels/JMS/updateConcept", null);
+					}
+				}
+			}
+			Event.replyEvent(evt, evt);
+			Event.consumeEvent(evt);
+			return;
+		}
 		if (evt.action == "update") {
 			Log.log(logger, "debug", "Batch %s for entity %s: %d rows with offset %d", evt.action, evt.entityUri, evt.limit, evt.offset);
 			String[] batch = Query.queryLimitedConceptIds(evt.entityUri, evt.limit, evt.offset);

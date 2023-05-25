@@ -19,10 +19,15 @@ void rulefunction Stats.setBatchStat {
 			}
 			long[] newStat = long[]{stat[0] + 1, stat[1], stat[2], Math.minLong(stat[3], timestamp), Math.maxLong(stat[4], timestamp)};
 			replaced = Collections.Map.Concurrent.replaceIfEqualToGivenValue(batchMap, batchId, stat, newStat);
-			if (replaced && newStat[0] >= newStat[1]) {
-				// completed batch, so printout stats and remove the key
-				Collections.Map.Concurrent.remove(batchMap, batchId, newStat);
-				Stats.printBatchStat(batchId, newStat);
+			if (replaced) {
+				if (newStat[1] > 0 && newStat[0] >= newStat[1]) {
+					// completed batch, print stats and remove the key
+					Collections.Map.Concurrent.remove(batchMap, batchId, newStat);
+					Stats.printBatchStat(batchId, newStat);
+				} else if (newStat[1] <= 0 && newStat[0] % GlobalValues.PRINT_STAT == 0) {
+					// if batch size is not specified, print intermediate stats at configured interval
+					Stats.printBatchStat(batchId, newStat);
+				}
 			}
 		}
 	}

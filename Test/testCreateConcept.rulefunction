@@ -34,7 +34,7 @@ void rulefunction Test.testCreateConcept {
 		
 		String oid = data[1];
 		long revision = Number.longValue(data[2], 10);
-		Events.CreateConcept evt = Events.CreateConcept.CreateConcept(null, data[4], oid, revision, 0, 0);
+		Events.CreateConcept evt = Events.CreateConcept.CreateConcept(null, data[4], oid, revision, 0, 0, null);
 		Log.log(logger, "info", "Send CreateConcept event - %s/%d: %s", oid, revision, data[4]);
 		Event.sendEvent(evt);
 	}

@@ -1,0 +1,55 @@
+/**
+ * @description send CreateConceptEvent and add concept extId to in-memory set to support in-memory updates.
+ */
+void rulefunction RuleFunctions.Load.sendCreateEvent {
+	attribute {
+		validity = ACTION;
+	}
+	scope {
+		String line;
+		String batchId;
+	}
+	body {
+		Object logger = Log.getLogger("RuleFunctions.Load.sendCreateEvent");
+		
+		String[] tokens = String.split(line, "\t");
+		if (tokens@length < 5) {
+			// not a valid line
+			return;
+		}
+		
+		String extId = String.format("%s/%s", tokens[1], tokens[2]);
+		String entityUri = null;
+		if (tokens[0] == "/type/author") {
+			entityUri = "/Concepts/Author";
+		} else if (tokens[0] == "/type/work") {
+			entityUri = "/Concepts/Work";
+		} else if (tokens[0] == "/type/edition") {
+			entityUri = "/Concepts/Book";
+		}
+		
+		Object set = Collections.Set.getSet(entityUri);
+		if (set == null) {
+			set = Collections.Set.createHashSetWithId(entityUri);
+		}
+		Collections.add(set, extId);
+		Log.log(logger, "debug", "Added %s to set %s; total %d items", extId, entityUri,  Collections.size(set));
+		
+		try {
+			// send event to create concept
+			long rev = Number.longValue(tokens[2], 10);
+			Events.CreateConcept evt = Events.CreateConcept.CreateConcept(
+				null /*extId String */,
+				tokens[4] /*payload String */,
+				tokens[1] /*oid String */,
+				rev /*revision long */,
+				0 /*maxNewRev long */,
+				0 /*minNewRev long */,
+				batchId /*batchId String*/);
+			Event.Ext.routeToImmediate(evt, "/Channels/JMS/createConcept", null);
+		} catch (Exception e) {
+			// invalid revision
+		}
+		
+	}
+}

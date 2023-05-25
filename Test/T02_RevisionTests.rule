@@ -14,9 +14,9 @@ rule Test.T02_RevisionTests {
 		tm@closure == "revision";
 	}
 	then {
-		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/authors/OL884910A", 10, -1, -3));
-		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/works/OL9896634W", 6, -1, -3));
-		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/books/OL45532136M", 1, -1, -3));
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/authors/OL884910A", 10, -1, -3, null));
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/works/OL9896634W", 6, -1, -3, null));
+		Event.sendEvent(Events.CreateConcept.CreateConcept(null, null, "/books/OL45532136M", 1, -1, -3, null));
 		
 		// create revisions directly here in timer rule
 		// TODO: this proves that it works to create concept explicitly using Instance.newInstance(),
