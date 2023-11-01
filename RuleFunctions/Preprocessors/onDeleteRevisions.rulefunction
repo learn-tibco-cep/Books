@@ -1,5 +1,5 @@
 /**
- * @description 
+ * @description Performance-test: use delete query to delete negative revisions of specified concepts.
  */
 void rulefunction RuleFunctions.Preprocessors.onDeleteRevisions {
 	attribute {

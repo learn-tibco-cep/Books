@@ -106,11 +106,23 @@ Sample requests for performance testing are included in the script: [request](./
 For example, you may use the following HTTP requests to load data from open-library data dump files, and then display a known author or book as follows.
 
 ```
-curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/Users/yxu/work/be6/perf-test/data/ol_dump_authors_2023-01-10.txt&skip=0&rows=10000&dataType=authors"
+curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/path/to/perf-test/data/ol_dump_authors_2023-01-10.txt&skip=0&rows=10000&dataType=authors"
 
-curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/Users/yxu/work/be6/perf-test/data/ol_dump_editions_2023-01-10.txt&skip=0&rows=10000&dataType=books"
+curl "http://localhost:8001/Channels/HTTP/loadFromFile?path=/path/to/perf-test/data/ol_dump_editions_2023-01-10.txt&skip=0&rows=10000&dataType=books"
+
+curl -v "http://localhost:8001/Channels/HTTP/updateByQuery?entityUri=/Concepts/Author&action=update&limit=10000&offset=0"
 
 curl -v "http://localhost:8001/Channels/HTTP/showAuthor?author_id=/authors/OL10834537A&revision=1"
 
 curl -v "http://localhost:8001/Channels/HTTP/showBook?book_id=/books/OL11046845M&revision=3"
+```
+
+Examples to replicate and delete concepts by queries.
+
+```
+curl -v "http://localhost:8001/Channels/HTTP/updateByQuery?entityUri=/Concepts/Book&action=revision&limit=10000&offset=0&maxRev=-1&minRev=-2"
+
+curl -v "http://localhost:8001/Channels/HTTP/countConcepts?entityUri=/Concepts/Book"
+
+curl -v "http://localhost:8001/Channels/HTTP/deleteRevisions?entityUri=/Concepts/Book"
 ```

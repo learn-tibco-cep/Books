@@ -7,5 +7,5 @@
     <nativeLibraryLocation/>
   </thirdpartyLibEntries>
   <javaSourceFolderEntries entryType="JAVA_SOURCE_FOLDER" path="/Books/JavaSrc" readOnly="true"/>
-  <enterpriseArchiveConfiguration name="Books" author="yxu" version="20" path="/Users/yxu/work/be6/perf-test/Books.ear" debug="false" overwrite="true"/>
+  <enterpriseArchiveConfiguration name="Books" author="yxu" version="23" path="/Users/yxu/work/be6/perf-test/Books.ear" debug="false" overwrite="true"/>
 </configuration:StudioProjectConfiguration>

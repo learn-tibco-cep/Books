@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <cluster xmlns="http://tibco.com/businessevents/configuration/6.2">
     <revision>
-        <version>19</version>
+        <version>24</version>
         <author>yxu</author>
-        <date>2023/05/25 12:05:04</date>
+        <date>2023/05/30 11:51:26</date>
         <comment/>
     </revision>
     <name>BooksEMS</name>
@@ -92,14 +92,6 @@
                     <thread-affinity-rule-function/>
                     <uri>/Channels/JMS/updateConcept</uri>
                 </destination>
-                <destination id="createConcept_49D7B89B">
-                    <pre-processor>/RuleFunctions/Preprocessors/onCreateConcept</pre-processor>
-                    <queue-size/>
-                    <thread-count/>
-                    <threading-model>shared-queue</threading-model>
-                    <thread-affinity-rule-function/>
-                    <uri>/Channels/JMS/createConcept</uri>
-                </destination>
                 <destination id="showAuthor_D21A165">
                     <pre-processor>/RuleFunctions/Preprocessors/onShowAuthor</pre-processor>
                     <queue-size/>
@@ -147,6 +139,14 @@
                     <threading-model>shared-queue</threading-model>
                     <thread-affinity-rule-function/>
                     <uri>/Channels/HTTP/showBook</uri>
+                </destination>
+                <destination id="createConcept_19BD8145">
+                    <pre-processor>/RuleFunctions/Preprocessors/onCreateConcept</pre-processor>
+                    <queue-size/>
+                    <thread-count/>
+                    <threading-model>shared-queue</threading-model>
+                    <thread-affinity-rule-function/>
+                    <uri>/Channels/JMS/createConcept</uri>
                 </destination>
             </destinations>
             <startup>
@@ -215,6 +215,8 @@
             <property name="tibco.clientVar.FileLoader/shared_threads" value="10"/>
             <property name="books.app.unitTests" value="false"/>
             <property name="books.app.printStat" value="1000"/>
+            <property name="tibco.clientVar.http_port" value="8001"/>
+            <property name="tibco.clientVar.EMS/queue_create" value="create_concept"/>
         </property-group>
     </property-group>
 </cluster>

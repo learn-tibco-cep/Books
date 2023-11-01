@@ -31,5 +31,15 @@
             <constraint/>
             <modTime>1525080416540</modTime>
         </globalVariable>
+        <globalVariable>
+            <name>queue_create</name>
+            <value>create_concept</value>
+            <type>String</type>
+            <deploymentSettable>true</deploymentSettable>
+            <serviceSettable>false</serviceSettable>
+            <description/>
+            <constraint/>
+            <modTime>1685466067607</modTime>
+        </globalVariable>
     </globalVariables>
 </repository>

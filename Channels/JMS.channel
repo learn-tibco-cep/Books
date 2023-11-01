@@ -16,7 +16,7 @@
         <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
-        <properties xsi:type="designtime:SimpleProperty" name="Name" value="create_concept"/>
+        <properties xsi:type="designtime:SimpleProperty" name="Name" value="%%EMS/queue_create%%"/>
         <properties xsi:type="designtime:SimpleProperty" name="Selector" value=""/>
         <properties xsi:type="designtime:SimpleProperty" name="DeliveryMode" value="2"/>
         <properties xsi:type="designtime:SimpleProperty" name="AckMode" value="23"/>
@@ -76,6 +76,7 @@
     </destinations>
     <destinations name="showWork" description="" GUID="91E343EB-4673-6BD8-C238-33A626E5F625" ownerProjectName="Books" eventURI="/Events/ShowWork" serializerDeserializerClass="com.tibco.cep.driver.jms.serializer.TextMessageSerializer" driverConfig="//@driver">
       <properties>
+        <properties xsi:type="designtime:SimpleProperty" name="be.http.ResponseEvent" value="" mandatory="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IsJSONPayload" value="true"/>
         <properties xsi:type="designtime:SimpleProperty" name="IncludeEventType" value="ALWAYS"/>
         <properties xsi:type="designtime:SimpleProperty" name="Queue" value="true"/>
